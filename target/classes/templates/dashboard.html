@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hệ thống quản lý</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .product-image {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .price-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #dc3545;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-store"></i> Hệ thống quản lý cửa hàng
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/products">
+                            <i class="fas fa-box"></i> Sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/categories">
+                            <i class="fas fa-tags"></i> Danh mục
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/users">
+                            <i class="fas fa-users"></i> Người dùng
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+                    <div>
+                        <button class="btn btn-outline-primary me-2" onclick="loadDashboardData()">
+                            <i class="fas fa-sync-alt"></i> Làm mới
+                        </button>
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Thêm sản phẩm
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-3x mb-3"></i>
+                        <h3 id="totalProducts">0</h3>
+                        <p class="mb-0">Tổng sản phẩm</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tags fa-3x mb-3"></i>
+                        <h3 id="totalCategories">0</h3>
+                        <p class="mb-0">Tổng danh mục</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card stats-card card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h3 id="totalUsers">0</h3>
+                        <p class="mb-0">Tổng người dùng</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products by Price Section -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">
+                            <i class="fas fa-sort-amount-down"></i>
+                            Sản phẩm theo giá (Thấp đến cao)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="productsByPriceContainer" class="row">
+                            <!-- Products will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Sections -->
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-4x text-primary mb-3"></i>
+                        <h5 class="card-title">Quản lý sản phẩm</h5>
+                        <p class="card-text">Thêm, sửa, xóa và quản lý danh sách sản phẩm</p>
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Vào quản lý
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-tags fa-4x text-success mb-3"></i>
+                        <h5 class="card-title">Quản lý danh mục</h5>
+                        <p class="card-text">Quản lý các danh mục sản phẩm</p>
+                        <a href="/categories" class="btn btn-success">
+                            <i class="fas fa-arrow-right"></i> Vào quản lý
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 card-hover">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-4x text-info mb-3"></i>
+                        <h5 class="card-title">Quản lý người dùng</h5>
+                        <p class="card-text">Quản lý thông tin người dùng hệ thống</p>
+                        <a href="/users" class="btn btn-info">
+                            <i class="fas fa-arrow-right"></i> Vào quản lý
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productDetailModalLabel">Chi tiết sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="productDetailContent">
+                        <!-- Product details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            loadDashboardData();
+        });
+
+        function loadDashboardData() {
+            // Load stats
+            loadStats();
+
+            // Load products by price
+            loadProductsByPrice();
+        }
+
+        function loadStats() {
+            // Load total products
+            $.get('/api/product')
+                .done(function(response) {
+                    if (response.success) {
+                        $('#totalProducts').text(response.data.totalElements);
+                    }
+                });
+
+            // Load total categories
+            $.get('/api/category')
+                .done(function(response) {
+                    if (response.success) {
+                        $('#totalCategories').text(response.data.totalElements);
+                    }
+                });
+
+            // Load total users
+            $.get('/api/user')
+                .done(function(response) {
+                    if (response.success) {
+                        $('#totalUsers').text(response.data.totalElements);
+                    }
+                });
+        }
+
+        function loadProductsByPrice() {
+            $.get('/api/product/sorted-by-price')
+                .done(function(response) {
+                    if (response.success) {
+                        displayProductsByPrice(response.data);
+                    } else {
+                        $('#productsByPriceContainer').html('<div class="col-12"><div class="alert alert-danger">Lỗi: ' + response.message + '</div></div>');
+                    }
+                })
+                .fail(function() {
+                    $('#productsByPriceContainer').html('<div class="col-12"><div class="alert alert-danger">Lỗi khi tải danh sách sản phẩm</div></div>');
+                });
+        }
+
+        function displayProductsByPrice(products) {
+            let html = '';
+
+            if (products.length === 0) {
+                html = '<div class="col-12"><div class="alert alert-info text-center">Không có sản phẩm nào</div></div>';
+            } else {
+                products.forEach(function(product) {
+                    let price = new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND'
+                    }).format(product.price);
+
+                    let imageHtml = product.images ?
+                        '<img src="' + product.images + '" class="product-image w-100" alt="' + product.title + '">' :
+                        '<div class="product-image w-100 d-flex align-items-center justify-content-center bg-light"><i class="fas fa-image fa-3x text-muted"></i></div>';
+
+                    html += '<div class="col-md-4 col-lg-3 mb-4">';
+                    html += '<div class="card product-card h-100">';
+                    html += '<div class="card-img-top">' + imageHtml + '</div>';
+                    html += '<div class="card-body d-flex flex-column">';
+                    html += '<h6 class="card-title">' + product.title + '</h6>';
+                    html += '<p class="card-text text-muted small flex-grow-1">' +
+                           (product.description ? product.description.substring(0, 100) + '...' : '') + '</p>';
+                    html += '<div class="mt-auto">';
+                    html += '<div class="price-text mb-2">' + price + '</div>';
+                    html += '<div class="d-flex justify-content-between align-items-center">';
+                    html += '<small class="text-muted">SL: ' + product.quantity + '</small>';
+                    html += '<button class="btn btn-sm btn-outline-primary" onclick="viewProductDetail(' + product.id + ')">';
+                    html += '<i class="fas fa-eye"></i> Chi tiết</button>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+            }
+
+            $('#productsByPriceContainer').html(html);
+        }
+
+        function viewProductDetail(productId) {
+            $.get('/api/product/' + productId)
+                .done(function(response) {
+                    if (response.success) {
+                        let product = response.data;
+                        let price = new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(product.price);
+
+                        let imageHtml = product.images ?
+                            '<img src="' + product.images + '" class="img-fluid rounded" alt="' + product.title + '">' :
+                            '<div class="text-center p-4 bg-light rounded"><i class="fas fa-image fa-4x text-muted"></i></div>';
+
+                        let detailHtml = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    ${imageHtml}
+                                </div>
+                                <div class="col-md-6">
+                                    <h4>${product.title}</h4>
+                                    <p class="text-muted">${product.description || 'Không có mô tả'}</p>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Giá:</strong></td>
+                                            <td class="price-text">${price}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Số lượng:</strong></td>
+                                            <td>${product.quantity}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>ID:</strong></td>
+                                            <td>${product.id}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                        $('#productDetailContent').html(detailHtml);
+                        $('#productDetailModal').modal('show');
+                    } else {
+                        alert('Lỗi: ' + response.message);
+                    }
+                })
+                .fail(function() {
+                    alert('Lỗi khi tải chi tiết sản phẩm');
+                });
+        }
+    </script>
+</body>
+</html>

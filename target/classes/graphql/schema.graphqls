@@ -1,0 +1,83 @@
+type User {
+    id: ID!
+    fullname: String!
+    email: String!
+    phone: String
+    products: [Product!]
+    categories: [Category!]
+}
+
+type Category {
+    id: ID!
+    name: String!
+    images: String
+    users: [User!]
+}
+
+type Product {
+    id: ID!
+    title: String!
+    quantity: Int!
+    description: String
+    price: Float!
+    images: String
+    user: User!
+    category: Category
+}
+
+input UserInput {
+    fullname: String!
+    email: String!
+    password: String!
+    phone: String
+    categoryIds: [ID!]
+}
+
+input CategoryInput {
+    name: String!
+    images: String
+}
+
+input ProductInput {
+    title: String!
+    quantity: Int!
+    description: String
+    price: Float!
+    images: String
+    userId: ID!
+    categoryId: ID
+}
+
+type Query {
+    # Product queries
+    getAllProducts: [Product!]!
+    getProductsSortedByPrice: [Product!]!
+    getProductsByCategory(categoryId: ID!): [Product!]!
+    getProduct(id: ID!): Product
+
+    # Category queries
+    getAllCategories: [Category!]!
+    getCategory(id: ID!): Category
+
+    # User queries
+    getAllUsers: [User!]!
+    getUser(id: ID!): User
+    getUserByEmail(email: String!): User
+}
+
+type Mutation {
+    # User mutations
+    createUser(input: UserInput!): User!
+    updateUser(id: ID!, input: UserInput!): User!
+    deleteUser(id: ID!): Boolean!
+
+    # Category mutations
+    createCategory(input: CategoryInput!): Category!
+    updateCategory(id: ID!, input: CategoryInput!): Category!
+    deleteCategory(id: ID!): Boolean!
+
+    # Product mutations
+    createProduct(input: ProductInput!): Product!
+    updateProduct(id: ID!, input: ProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+}

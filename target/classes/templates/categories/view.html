@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Category</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 30px 0;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .category-icon {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+        }
+        
+        .badge-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <img src="/uploads/avatars/avatar.jpg" alt="Profile" class="profile-img" 
+                         onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=TP'">
+                </div>
+                <div class="col-md-8">
+                    <h1 class="navbar-brand mb-0">
+                        <i class="fas fa-layer-group me-2"></i>
+                        Quản Lý Category
+                    </h1>
+                </div>
+                <div class="col-md-2 text-end">
+                    <a href="/categories" class="btn btn-outline-light">
+                        <i class="fas fa-home me-1"></i>
+                        Trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/categories">Danh sách Category</a></li>
+                    <li class="breadcrumb-item active">Chi tiết Category</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-eye me-2"></i>
+                    Chi tiết Category
+                </h2>
+                <div>
+                    <a th:href="@{/categories/edit/{id}(id=${category.cateid})}" class="btn btn-warning me-2">
+                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                    </a>
+                    <a href="/categories" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                </div>
+            </div>
+
+            <!-- Category Details -->
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- Category Icon -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-image me-2"></i>
+                                Icon Category
+                            </h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div th:if="${category.iconPath != null and !category.iconPath.isEmpty()}">
+                                <img th:src="@{'/' + category.iconPath}" 
+                                     alt="Category Icon" class="category-icon img-fluid">
+                                <div class="mt-3">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Có icon
+                                    </span>
+                                </div>
+                            </div>
+                            <div th:if="${category.iconPath == null or category.iconPath.isEmpty()}">
+                                <div class="d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <div class="text-center text-muted">
+                                        <i class="fas fa-image fa-4x mb-3"></i>
+                                        <p class="mb-0">Chưa có icon</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-times me-1"></i>Không có icon
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <!-- Basic Information -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Thông tin cơ bản
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0"><i class="fas fa-hashtag me-1"></i>ID</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    <span class="badge-custom" th:text="${category.cateid}">1</span>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0"><i class="fas fa-tag me-1"></i>Tên Category</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    <strong th:text="${category.catename}">Category Name</strong>
+                                </div>
+                            </div>
+                            <hr th:if="${category.iconFilename != null and !category.iconFilename.isEmpty()}">
+                            <div class="row" th:if="${category.iconFilename != null and !category.iconFilename.isEmpty()}">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0"><i class="fas fa-file me-1"></i>Tên file icon</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    <code th:text="${category.iconFilename}">filename.jpg</code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date Information -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-clock me-2"></i>
+                                Thông tin thời gian
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0"><i class="fas fa-plus-circle me-1"></i>Ngày tạo</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    <span th:text="${#temporals.format(category.createdAt, 'dd/MM/yyyy HH:mm:ss')}">
+                                        01/01/2024 10:00:00
+                                    </span>
+                                    <small class="text-muted ms-2">
+                                        (<span th:text="${#temporals.format(category.createdAt, 'EEEE', new java.util.Locale('vi'))}">Thứ Hai</span>)
+                                    </small>
+                                </div>
+                            </div>
+                            <hr th:if="${category.updatedAt != null}">
+                            <div class="row" th:if="${category.updatedAt != null}">
+                                <div class="col-sm-3">
+                                    <h6 class="mb-0"><i class="fas fa-edit me-1"></i>Lần cập nhật cuối</h6>
+                                </div>
+                                <div class="col-sm-9 text-secondary">
+                                    <span th:text="${#temporals.format(category.updatedAt, 'dd/MM/yyyy HH:mm:ss')}">
+                                        01/01/2024 10:00:00
+                                    </span>
+                                    <small class="text-muted ms-2">
+                                        (<span th:text="${#temporals.format(category.updatedAt, 'EEEE', new java.util.Locale('vi'))}">Thứ Hai</span>)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/categories/edit/{id}(id=${category.cateid})}" class="btn btn-warning">
+                            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                        </a>
+                        <button type="button" class="btn btn-danger" 
+                                onclick="confirmDelete([[${category.cateid}]], '[[${category.catename}]]')">
+                            <i class="fas fa-trash me-2"></i>Xóa
+                        </button>
+                        <a href="/categories" class="btn btn-outline-secondary">
+                            <i class="fas fa-list me-2"></i>Danh sách Category
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Thông tin sinh viên</h5>
+                    <p class="mb-1"><strong>Họ tên:</strong> Trần Phúc Toàn</p>
+                    <p class="mb-1"><strong>MSSV:</strong> 23110344</p>
+                    <p class="mb-0"><strong>Lớp:</strong> 231102A</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5><i class="fas fa-info-circle me-2"></i>Bài tập ngày 18/09/2025</h5>
+                    <p class="mb-1"><strong>Môn học:</strong> Lập trình Web</p>
+                    <p class="mb-0"><strong>Năm:</strong> 2025</p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <small>&copy; 2025 Trần Phúc Toàn - 23110344</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa category "<span id="categoryName"></span>" không?</p>
+                    <p class="text-danger"><small>Hành động này không thể hoàn tác.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function confirmDelete(id, name) {
+            document.getElementById('categoryName').textContent = name;
+            document.getElementById('deleteForm').action = '/categories/delete/' + id;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+</body>
+</html>

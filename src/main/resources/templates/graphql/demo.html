@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphQL Demo - Shop Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .result-area {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .query-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.375rem;
+            background-color: #ffffff;
+        }
+        .btn-execute {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center mb-4">GraphQL API Demo - Shop Management System</h1>
+                
+                <!-- Product Queries Section -->
+                <div class="query-section">
+                    <h3 class="text-primary">Product Queries</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <button class="btn btn-primary w-100 btn-execute" onclick="getAllProducts()">
+                                Get All Products
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-success w-100 btn-execute" onclick="getProductsSortedByPrice()">
+                                Products Sorted by Price
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <input type="number" id="categoryIdInput" class="form-control" placeholder="Category ID">
+                                <button class="btn btn-info" onclick="getProductsByCategory()">
+                                    Get by Category
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h5>Results:</h5>
+                        <div id="productResults" class="result-area"></div>
+                    </div>
+                </div>
+
+                <!-- Category Management Section -->
+                <div class="query-section">
+                    <h3 class="text-primary">Category Management</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary w-100 btn-execute" onclick="getAllCategories()">
+                                Get All Categories
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" id="categoryName" class="form-control" placeholder="Category Name">
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-success w-100" onclick="createCategory()">
+                                        Create Category
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h5>Results:</h5>
+                        <div id="categoryResults" class="result-area"></div>
+                    </div>
+                </div>
+
+                <!-- User Management Section -->
+                <div class="query-section">
+                    <h3 class="text-primary">User Management</h3>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary w-100 btn-execute" onclick="getAllUsers()">
+                                Get All Users
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="email" id="userEmail" class="form-control" placeholder="Email">
+                                <button class="btn btn-info" onclick="getUserByEmail()">
+                                    Find by Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Create User Form -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <input type="text" id="userFullname" class="form-control" placeholder="Full Name">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="email" id="userEmailCreate" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="password" id="userPassword" class="form-control" placeholder="Password">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="text" id="userPhone" class="form-control" placeholder="Phone">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-success w-100" onclick="createUser()">
+                                Create User
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h5>Results:</h5>
+                        <div id="userResults" class="result-area"></div>
+                    </div>
+                </div>
+
+                <!-- Product Management Section -->
+                <div class="query-section">
+                    <h3 class="text-primary">Product Management</h3>
+                    
+                    <!-- Create Product Form -->
+                    <div class="row mb-3">
+                        <div class="col-md-2">
+                            <input type="text" id="productTitle" class="form-control" placeholder="Product Title">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="productQuantity" class="form-control" placeholder="Quantity">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="productPrice" class="form-control" placeholder="Price" step="0.01">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="productUserId" class="form-control" placeholder="User ID">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="productCategoryId" class="form-control" placeholder="Category ID">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-success w-100" onclick="createProduct()">
+                                Create Product
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea id="productDescription" class="form-control" rows="2" placeholder="Product Description"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <h5>Results:</h5>
+                        <div id="productManagementResults" class="result-area"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const GRAPHQL_ENDPOINT = '/graphql';
+
+        async function executeGraphQL(query, variables = {}) {
+            try {
+                const response = await fetch(GRAPHQL_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        variables: variables
+                    })
+                });
+
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('GraphQL Error:', error);
+                return { errors: [{ message: error.message }] };
+            }
+        }
+
+        function displayResults(elementId, data) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+        }
+
+        // Product Functions
+        async function getAllProducts() {
+            const query = `
+                query {
+                    getAllProducts {
+                        id
+                        title
+                        quantity
+                        price
+                        description
+                        user {
+                            id
+                            fullname
+                        }
+                        category {
+                            id
+                            name
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query);
+            displayResults('productResults', result);
+        }
+
+        async function getProductsSortedByPrice() {
+            const query = `
+                query {
+                    getProductsSortedByPrice {
+                        id
+                        title
+                        quantity
+                        price
+                        user {
+                            fullname
+                        }
+                        category {
+                            name
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query);
+            displayResults('productResults', result);
+        }
+
+        async function getProductsByCategory() {
+            const categoryId = document.getElementById('categoryIdInput').value;
+            if (!categoryId) {
+                alert('Please enter a category ID');
+                return;
+            }
+
+            const query = `
+                query GetProductsByCategory($categoryId: ID!) {
+                    getProductsByCategory(categoryId: $categoryId) {
+                        id
+                        title
+                        quantity
+                        price
+                        user {
+                            fullname
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query, { categoryId: parseInt(categoryId) });
+            displayResults('productResults', result);
+        }
+
+        // Category Functions
+        async function getAllCategories() {
+            const query = `
+                query {
+                    getAllCategories {
+                        id
+                        name
+                        images
+                        products {
+                            id
+                            title
+                            price
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query);
+            displayResults('categoryResults', result);
+        }
+
+        async function createCategory() {
+            const name = document.getElementById('categoryName').value;
+            if (!name) {
+                alert('Please enter a category name');
+                return;
+            }
+
+            const query = `
+                mutation CreateCategory($input: CategoryInput!) {
+                    createCategory(input: $input) {
+                        id
+                        name
+                        images
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query, { 
+                input: { 
+                    name: name,
+                    images: null
+                } 
+            });
+            displayResults('categoryResults', result);
+            document.getElementById('categoryName').value = '';
+        }
+
+        // User Functions
+        async function getAllUsers() {
+            const query = `
+                query {
+                    getAllUsers {
+                        id
+                        fullname
+                        email
+                        phone
+                        products {
+                            id
+                            title
+                            price
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query);
+            displayResults('userResults', result);
+        }
+
+        async function getUserByEmail() {
+            const email = document.getElementById('userEmail').value;
+            if (!email) {
+                alert('Please enter an email');
+                return;
+            }
+
+            const query = `
+                query GetUserByEmail($email: String!) {
+                    getUserByEmail(email: $email) {
+                        id
+                        fullname
+                        email
+                        phone
+                        products {
+                            id
+                            title
+                            price
+                        }
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query, { email: email });
+            displayResults('userResults', result);
+        }
+
+        async function createUser() {
+            const fullname = document.getElementById('userFullname').value;
+            const email = document.getElementById('userEmailCreate').value;
+            const password = document.getElementById('userPassword').value;
+            const phone = document.getElementById('userPhone').value;
+
+            if (!fullname || !email || !password) {
+                alert('Please fill in required fields: fullname, email, password');
+                return;
+            }
+
+            const query = `
+                mutation CreateUser($input: UserInput!) {
+                    createUser(input: $input) {
+                        id
+                        fullname
+                        email
+                        phone
+                    }
+                }
+            `;
+            const result = await executeGraphQL(query, { 
+                input: { 
+                    fullname: fullname,
+                    email: email,
+                    password: password,
+                    phone: phone
+                } 
+            });
+            displayResults('userResults', result);
+            
+            // Clear form
+            document.getElementById('userFullname').value = '';
+            document.getElementById('userEmailCreate').value = '';
+            document.getElementById('userPassword').value = '';
+            document.getElementById('userPhone').value = '';
+        }
+
+        // Product Management Functions
+        async function createProduct() {
+            const title = document.getElementById('productTitle').value;
+            const quantity = document.getElementById('productQuantity').value;
+            const price = document.getElementById('productPrice').value;
+            const userId = document.getElementById('productUserId').value;
+            const categoryId = document.getElementById('productCategoryId').value;
+            const description = document.getElementById('productDescription').value;
+
+            if (!title || !quantity || !price || !userId) {
+                alert('Please fill in required fields: title, quantity, price, user ID');
+                return;
+            }
+
+            const query = `
+                mutation CreateProduct($input: ProductInput!) {
+                    createProduct(input: $input) {
+                        id
+                        title
+                        quantity
+                        price
+                        description
+                        user {
+                            fullname
+                        }
+                        category {
+                            name
+                        }
+                    }
+                }
+            `;
+            
+            const input = {
+                title: title,
+                quantity: parseInt(quantity),
+                price: parseFloat(price),
+                userId: parseInt(userId),
+                description: description
+            };
+            
+            if (categoryId) {
+                input.categoryId = parseInt(categoryId);
+            }
+
+            const result = await executeGraphQL(query, { input: input });
+            displayResults('productManagementResults', result);
+            
+            // Clear form
+            document.getElementById('productTitle').value = '';
+            document.getElementById('productQuantity').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productUserId').value = '';
+            document.getElementById('productCategoryId').value = '';
+            document.getElementById('productDescription').value = '';
+        }
+
+        // Load initial data
+        window.onload = function() {
+            getAllCategories();
+        };
+    </script>
+</body>
+</html>
