@@ -180,6 +180,15 @@ mutation {
 ```
 
 #### 2. Cập nhật sản phẩm
+
+## Static default image
+
+The project uses a default image fallback for cases where an image fails to load. Place a `default_image.png` file in one of these locations:
+
+- `src/main/resources/static/images/default_image.png` (recommended — served from classpath)
+- project root `default_image.png` (convenient during development; WebConfig maps this path as a fallback)
+
+Templates and client JS use `/images/default_image.png` as the fallback URL when an image can't be loaded.
 ```graphql
 mutation {
   updateProduct(id: 1, input: {

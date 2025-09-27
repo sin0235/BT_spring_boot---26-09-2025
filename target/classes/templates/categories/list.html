@@ -216,7 +216,7 @@
                                             <i class="fas fa-sort-down" th:if="${sortBy == 'cateid' and sortDir == 'desc'}"></i>
                                         </a>
                                     </th>
-                                    <th>Icon</th>
+                                    <!-- Icon column removed -->
                                     <th>
                                         <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='catename', sortDir=${sortBy == 'catename' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
                                            class="text-decoration-none text-white">
@@ -224,14 +224,10 @@
                                             <i class="fas fa-sort" th:if="${sortBy != 'catename'}"></i>
                                             <i class="fas fa-sort-up" th:if="${sortBy == 'catename' and sortDir == 'asc'}"></i>
                                             <i class="fas fa-sort-down" th:if="${sortBy == 'catename' and sortDir == 'desc'}"></i>
-                                        </a>
-                                    </th>
-                                    <th>
-                                        <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='createdAt', sortDir=${sortBy == 'createdAt' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
-                                           class="text-decoration-none text-white">
-                                            Ngày tạo
-                                            <i class="fas fa-sort" th:if="${sortBy != 'createdAt'}"></i>
-                                            <i class="fas fa-sort-up" th:if="${sortBy == 'createdAt' and sortDir == 'asc'}"></i>
+                                        <td>
+                                            <!-- Do not load category icon images; show placeholder -->
+                                            <i class="fas fa-tags text-muted"></i>
+                                        </td>
                                             <i class="fas fa-sort-down" th:if="${sortBy == 'createdAt' and sortDir == 'desc'}"></i>
                                         </a>
                                     </th>

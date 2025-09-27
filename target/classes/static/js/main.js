@@ -86,11 +86,11 @@ function loadCategories(page = 0, size = 10, search = '') {
         success: function(response) {
             console.debug('loadCategories response', response);
             if (response.status === 'success') {
-                renderCategoriesTable(response.body.content);
-                renderCategoriesPagination(response.body);
-            } else {
-                showMessage('error', response.message);
-            }
+                        renderCategoriesTable(response.body.content);
+                        renderCategoriesPagination(response.body);
+                    } else {
+                        showMessage('error', response.message);
+                    }
         },
         error: function(xhr, status, error) {
             console.error('Error loading categories:', error);
@@ -114,9 +114,8 @@ function renderCategoriesTable(categories) {
     }
     
     categories.forEach(function(category, index) {
-        const icon = category.iconPath ? 
-            `<img src="${category.iconPath}" alt="Icon" style="width: 30px; height: 30px; object-fit: cover;" onerror="this.src='/images/default_image.png'">` : 
-            '<i class="fas fa-image text-muted"></i>';
+        // Do not load category icon images; show a simple placeholder icon instead
+        const icon = '<i class="fas fa-tags text-muted"></i>';
             
         const row = `
             <tr>
@@ -354,9 +353,8 @@ function renderProductsTable(products) {
     }
     
     products.forEach(function(product, index) {
-        const image = product.images ? 
-            `<img src="${product.images}" alt="Product" style="width: 40px; height: 40px; object-fit: cover;" onerror="this.src='/images/default_image.png'">` : 
-            '<i class="fas fa-image text-muted"></i>';
+        // Do not load product images in tables; use placeholder
+        const image = '<i class="fas fa-box text-muted"></i>';
             
         const statusBadge = product.status ? 
             '<span class="badge bg-success">Hoạt động</span>' : 

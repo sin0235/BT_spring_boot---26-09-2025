@@ -85,10 +85,7 @@
                             <label for="productDescription" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="productImage" class="form-label">Hình ảnh</label>
-                            <input type="file" class="form-control" id="productImage" name="images" accept="image/*">
-                        </div>
+                        <!-- Image upload disabled: images are not used in UI -->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -180,9 +177,10 @@
 
             $.get(url)
                 .done(function(response) {
-                    if (response.success) {
-                        displayProducts(response.data.content);
-                        displayPagination(response.data);
+                    if (response.status === 'success') {
+                        const page = response.body || response;
+                        displayProducts(page.content || []);
+                        displayPagination(page);
                     } else {
                         alert('Lỗi: ' + response.message);
                     }
@@ -283,9 +281,7 @@
             formData.append('price', $('#productPrice').val());
             formData.append('description', $('#productDescription').val());
 
-            if ($('#productImage')[0].files[0]) {
-                formData.append('images', $('#productImage')[0].files[0]);
-            }
+            // Image upload disabled: don't append image file
 
             $.ajax({
                 url: '/api/product',
@@ -295,7 +291,7 @@
                 contentType: false
             })
             .done(function(response) {
-                if (response.success) {
+                if (response.status === 'created' || response.status === 'success') {
                     alert('Thêm sản phẩm thành công!');
                     $('#addProductModal').modal('hide');
                     $('#addProductForm')[0].reset();

@@ -263,9 +263,8 @@
                         currency: 'VND'
                     }).format(product.price);
 
-                    let imageHtml = product.images ?
-                        '<img src="' + product.images + '" class="product-image w-100" alt="' + product.title + '" onerror="this.src=\'/images/default_image.png\'">' :
-                        '<div class="product-image w-100 d-flex align-items-center justify-content-center bg-light"><i class="fas fa-image fa-3x text-muted"></i></div>';
+                    // Do not display product images on dashboard — show an icon placeholder instead
+                    let imageHtml = '<div class="product-image w-100 d-flex align-items-center justify-content-center bg-light"><i class="fas fa-box fa-2x text-muted"></i></div>';
 
                     html += '<div class="col-md-4 col-lg-3 mb-4">';
                     html += '<div class="card product-card h-100">';
@@ -301,9 +300,8 @@
                             currency: 'VND'
                         }).format(product.price);
 
-                        let imageHtml = product.images ?
-                            '<img src="' + product.images + '" class="img-fluid rounded" alt="' + product.title + '" onerror="this.src=\'/images/default_image.png\'">' :
-                            '<div class="text-center p-4 bg-light rounded"><i class="fas fa-image fa-4x text-muted"></i></div>';
+                        // In product detail modal do not load image — show placeholder
+                        let imageHtml = '<div class="text-center p-4 bg-light rounded"><i class="fas fa-box fa-4x text-muted"></i></div>';
 
                         let detailHtml = `
                             <div class="row">
