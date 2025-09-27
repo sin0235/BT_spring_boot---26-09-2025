@@ -10,15 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import vn.iotstar.entity.Category;
-import vn.iotstar.entity.Product;
 import vn.iotstar.model.Response;
 import vn.iotstar.service.CategoryService;
-import vn.iotstar.service.ProductService;
-import vn.iotstar.service.StorageService;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,12 +23,6 @@ public class CategoryApiController {
     
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private StorageService storageService;
     
     @Operation(summary = "Get all categories with pagination and search")
     @GetMapping
@@ -171,20 +160,6 @@ public class CategoryApiController {
             categoryService.deleteById(id);
             return ResponseEntity.ok(Response.success("Xóa category thành công"));
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get all products of a specific category")
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<Response<List<Product>>> getProductsByCategory(
-            @Parameter(description = "Category ID") @PathVariable Integer categoryId) {
-
-        try {
-            List<Product> products = productService.findByCategoryId(categoryId);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm của category thành công", products));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Response.error("Lỗi server: " + e.getMessage()));

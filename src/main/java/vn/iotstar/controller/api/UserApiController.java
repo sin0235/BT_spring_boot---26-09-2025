@@ -117,11 +117,11 @@ public class UserApiController {
             user.setPassword(password.trim());
             user.setPhone(phone);
 
-        // Handle categories if provided
-        if (categoryIds != null && !categoryIds.isEmpty()) {
-            List<Category> categories = categoryService.findAllById(categoryIds);
-            user.setCategories(categories);
-        }
+            // Handle categories if provided
+            if (categoryIds != null && !categoryIds.isEmpty()) {
+                List<Category> categories = categoryService.findAllById(categoryIds);
+                user.setCategories(categories);
+            }
 
             User savedUser = userService.save(user);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -206,26 +206,6 @@ public class UserApiController {
             userService.deleteById(id);
             return ResponseEntity.ok(Response.success("Xóa user thành công"));
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get user by email")
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Response<User>> getUserByEmail(
-            @Parameter(description = "User email") @PathVariable String email) {
-
-        try {
-            Optional<User> user = userService.findByEmail(email);
-
-            if (user.isPresent()) {
-                return ResponseEntity.ok(Response.success("Lấy thông tin user thành công", user.get()));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Response.notFound("Không tìm thấy user với email: " + email));
-            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Response.error("Lỗi server: " + e.getMessage()));

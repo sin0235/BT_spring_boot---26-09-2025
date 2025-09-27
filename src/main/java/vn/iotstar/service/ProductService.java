@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.iotstar.entity.Category;
 import vn.iotstar.entity.Product;
 import vn.iotstar.repository.ProductRepository;
 
@@ -42,7 +41,6 @@ public class ProductService {
         return productRepository.findById(id);
     }
     
-    
     // Save operations
     public Product save(Product product) {
         return productRepository.save(product);
@@ -61,7 +59,6 @@ public class ProductService {
         return productRepository.findByTitleContainingIgnoreCase(name.trim(), pageable);
     }
     
-    
     public List<Product> findByCategoryId(Integer categoryId) {
         return productRepository.findByCategoryId(categoryId);
     }
@@ -76,33 +73,6 @@ public class ProductService {
             return productRepository.findByCategoryId(categoryId, pageable);
         }
         return productRepository.findByTitleContainingIgnoreCaseAndCategoryId(name.trim(), categoryId, pageable);
-    }
-    
-    
-    // Price range operations
-    public List<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        return productRepository.findByPriceRange(minPrice, maxPrice);
-    }
-
-    public List<Product> findByPriceRangeOrderByPrice(BigDecimal minPrice, BigDecimal maxPrice) {
-        return productRepository.findByPriceRangeOrderByPrice(minPrice, maxPrice);
-    }
-
-    public Page<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
-        return productRepository.findByPriceRange(minPrice, maxPrice, pageable);
-    }
-
-    // Specialized product queries
-    public List<Product> findDiscountedProducts() {
-        return productRepository.findDiscountedProducts();
-    }
-
-    public List<Product> findOutOfStockProducts() {
-        return productRepository.findOutOfStockProducts();
-    }
-
-    public List<Product> findLowStockProducts(Integer threshold) {
-        return productRepository.findLowStockProducts(threshold);
     }
     
     // Validation operations
@@ -130,7 +100,6 @@ public class ProductService {
     public long countByCategoryId(Integer categoryId) {
         return productRepository.countByCategoryId(categoryId);
     }
-    
     
     // Create and Update operations for API Controller
     public Product createProduct(Product product) {
