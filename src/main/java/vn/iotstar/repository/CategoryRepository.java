@@ -32,4 +32,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     // Đếm tổng số categories
     long count();
+
+    // Tìm categories theo danh sách ID
+    List<Category> findAllById(List<Integer> ids);
 }

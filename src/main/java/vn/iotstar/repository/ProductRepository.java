@@ -30,10 +30,12 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findAll(@NonNull Pageable pageable);
     
     // Tìm sản phẩm theo category ID
-    List<Product> findByCategoryId(Integer categoryId);
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    List<Product> findByCategoryId(@Param("categoryId") Integer categoryId);
 
     // Tìm sản phẩm theo category ID với phân trang
-    Page<Product> findByCategoryId(Integer categoryId, Pageable pageable);
+    @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId")
+    Page<Product> findByCategoryId(@Param("categoryId") Integer categoryId, Pageable pageable);
 
     // Tìm kiếm sản phẩm theo tên và category
     @Query("SELECT p FROM Product p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :title, '%')) AND p.category.id = :categoryId")
@@ -66,6 +68,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     long countByCategory(Category category);
     
     // Đếm sản phẩm theo category ID
-    long countByCategoryId(Integer categoryId);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId")
+    long countByCategoryId(@Param("categoryId") Integer categoryId);
 
 }

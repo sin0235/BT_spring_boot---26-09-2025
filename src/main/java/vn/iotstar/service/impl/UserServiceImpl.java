@@ -69,23 +69,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findByFullnameContaining(String name, Pageable pageable) {
-        // Since UserRepository doesn't have this method, we'll implement it by filtering
-        // For now, return all users if name is provided
         if (name == null || name.trim().isEmpty()) {
             return userRepository.findAll(pageable);
         }
-        // This is a simple implementation - in production, you might want to add a custom query
-        List<User> allUsers = userRepository.findAll();
-        List<User> filteredUsers = allUsers.stream()
-                .filter(user -> user.getFullname().toLowerCase().contains(name.toLowerCase()))
-                .toList();
-
-        // For pagination, we need to manually implement it
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), filteredUsers.size());
-        List<User> pageContent = filteredUsers.subList(start, end);
-
-        return new org.springframework.data.domain.PageImpl<>(pageContent, pageable, filteredUsers.size());
+        return userRepository.findByFullnameContaining(name.trim(), pageable);
     }
 
     @Override

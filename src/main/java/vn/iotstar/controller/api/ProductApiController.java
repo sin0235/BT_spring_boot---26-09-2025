@@ -99,6 +99,7 @@ public class ProductApiController {
             @Parameter(description = "Description") @RequestParam(required = false) String description,
             @Parameter(description = "Price") @RequestParam BigDecimal price,
             @Parameter(description = "User ID") @RequestParam Integer userId,
+            @Parameter(description = "Category ID") @RequestParam(required = false) Integer categoryId,
             @Parameter(description = "Product image") @RequestParam(required = false) MultipartFile images) {
 
         try {
@@ -124,11 +125,29 @@ public class ProductApiController {
                         .body(Response.badRequest("Tên sản phẩm đã tồn tại"));
             }
 
+            // Validate user exists
+            if (userId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Response.badRequest("User ID không được để trống"));
+            }
+
             Product product = new Product();
             product.setTitle(title.trim());
             product.setQuantity(quantity);
             product.setDescription(description);
             product.setPrice(price);
+
+            // Set user
+            User user = new User();
+            user.setId(userId);
+            product.setUser(user);
+
+            // Set category if provided
+            if (categoryId != null) {
+                Category category = new Category();
+                category.setId(categoryId);
+                product.setCategory(category);
+            }
 
             // Handle image upload
             if (images != null && !images.isEmpty()) {
@@ -159,6 +178,7 @@ public class ProductApiController {
             @Parameter(description = "Quantity") @RequestParam Integer quantity,
             @Parameter(description = "Description") @RequestParam(required = false) String description,
             @Parameter(description = "Price") @RequestParam BigDecimal price,
+            @Parameter(description = "Category ID") @RequestParam(required = false) Integer categoryId,
             @Parameter(description = "Product image") @RequestParam(required = false) MultipartFile images) {
 
         try {
@@ -196,6 +216,15 @@ public class ProductApiController {
             product.setQuantity(quantity);
             product.setDescription(description);
             product.setPrice(price);
+
+            // Update category if provided
+            if (categoryId != null) {
+                Category category = new Category();
+                category.setId(categoryId);
+                product.setCategory(category);
+            } else {
+                product.setCategory(null);
+            }
 
             // Handle image upload
             if (images != null && !images.isEmpty()) {

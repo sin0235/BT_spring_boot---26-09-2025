@@ -45,9 +45,6 @@ public class Product implements Serializable {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @Column(name = "category_id", insertable = false, updatable = false)
-    private Integer categoryId;
-
     @Column(name = "images", length = 500)
     private String images;
 
@@ -133,11 +130,12 @@ public class Product implements Serializable {
     }
 
     public Integer getCategoryId() {
-        return categoryId;
+        return category != null ? category.getId() : null;
     }
 
     public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+        // This method is kept for compatibility but should not be used directly
+        // Use setCategory() instead
     }
 
     public String getImages() {
@@ -194,7 +192,7 @@ public class Product implements Serializable {
                 ", title='" + title + '\'' +
                 ", quantity=" + quantity +
                 ", price=" + price +
-                ", categoryId=" + categoryId +
+                ", categoryId=" + getCategoryId() +
                 '}';
     }
 }
