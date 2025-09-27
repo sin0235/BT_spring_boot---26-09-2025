@@ -44,7 +44,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     
     // GraphQL specific queries
     // Tìm tất cả sản phẩm sắp xếp theo giá từ thấp đến cao
-    @Query("SELECT p FROM Product p ORDER BY p.price ASC")
+    // Eagerly fetch user and category to prevent LazyInitializationException when serializing via GraphQL
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.user LEFT JOIN FETCH p.category ORDER BY p.price ASC")
     List<Product> findAllOrderByPriceAsc();
     
     // Tìm sản phẩm theo user ID

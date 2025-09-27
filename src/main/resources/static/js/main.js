@@ -78,11 +78,13 @@ function loadCategories(page = 0, size = 10, search = '') {
         url += `&q=${encodeURIComponent(search)}`;
     }
     
+    console.debug('loadCategories called', { page: page, size: size, search: search });
     $.ajax({
         url: url,
         method: 'GET',
         dataType: 'json',
         success: function(response) {
+            console.debug('loadCategories response', response);
             if (response.status === 'success') {
                 renderCategoriesTable(response.body.content);
                 renderCategoriesPagination(response.body);
@@ -100,6 +102,7 @@ function loadCategories(page = 0, size = 10, search = '') {
 function renderCategoriesTable(categories) {
     const tbody = $('#categoriesTableBody');
     tbody.empty();
+    console.debug('renderCategoriesTable called, count=', categories ? categories.length : 0);
     
     if (categories.length === 0) {
         tbody.append(`
@@ -112,7 +115,7 @@ function renderCategoriesTable(categories) {
     
     categories.forEach(function(category, index) {
         const icon = category.iconPath ? 
-            `<img src="${category.iconPath}" alt="Icon" style="width: 30px; height: 30px; object-fit: cover;">` : 
+            `<img src="${category.iconPath}" alt="Icon" style="width: 30px; height: 30px; object-fit: cover;" onerror="this.src='/images/default_image.png'">` : 
             '<i class="fas fa-image text-muted"></i>';
             
         const row = `
@@ -315,11 +318,13 @@ function loadProducts(page = 0, size = 10, search = '', categoryId = '') {
         url += `&categoryId=${categoryId}`;
     }
     
+    console.debug('loadProducts called', { page: page, size: size, search: search, categoryId: categoryId });
     $.ajax({
         url: url,
         method: 'GET',
         dataType: 'json',
         success: function(response) {
+            console.debug('loadProducts response', response);
             if (response.status === 'success') {
                 renderProductsTable(response.body.content);
                 renderProductsPagination(response.body);
@@ -337,6 +342,7 @@ function loadProducts(page = 0, size = 10, search = '', categoryId = '') {
 function renderProductsTable(products) {
     const tbody = $('#productsTableBody');
     tbody.empty();
+    console.debug('renderProductsTable called, count=', products ? products.length : 0, 'first=', products && products.length ? products[0] : null);
     
     if (products.length === 0) {
         tbody.append(`
@@ -349,7 +355,7 @@ function renderProductsTable(products) {
     
     products.forEach(function(product, index) {
         const image = product.images ? 
-            `<img src="${product.images}" alt="Product" style="width: 40px; height: 40px; object-fit: cover;">` : 
+            `<img src="${product.images}" alt="Product" style="width: 40px; height: 40px; object-fit: cover;" onerror="this.src='/images/default_image.png'">` : 
             '<i class="fas fa-image text-muted"></i>';
             
         const statusBadge = product.status ? 

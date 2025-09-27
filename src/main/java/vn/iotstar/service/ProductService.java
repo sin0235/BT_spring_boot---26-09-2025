@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vn.iotstar.entity.Category;
 import vn.iotstar.entity.Product;
 import vn.iotstar.repository.ProductRepository;
@@ -19,6 +21,8 @@ public class ProductService {
     
     @Autowired
     private ProductRepository productRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
     
     // Basic CRUD operations
     public List<Product> findAll() {
@@ -31,7 +35,15 @@ public class ProductService {
     
     // GraphQL specific methods
     public List<Product> findAllOrderByPriceAsc() {
-        return productRepository.findAllOrderByPriceAsc();
+        logger.debug("findAllOrderByPriceAsc() called");
+        try {
+            List<Product> products = productRepository.findAllOrderByPriceAsc();
+            logger.info("findAllOrderByPriceAsc() returned {} products", products == null ? 0 : products.size());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in findAllOrderByPriceAsc()", e);
+            throw e;
+        }
     }
 
     public List<Product> findByUserId(Integer userId) {

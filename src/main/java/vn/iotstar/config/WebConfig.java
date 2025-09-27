@@ -21,5 +21,10 @@ public class WebConfig implements WebMvcConfigurer {
         // Handle images
         registry.addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/static/images/");
+
+        // Fallback: allow serving a default image from project root in case it's placed there
+        // so developers can drop default_image.png at the repo root and it will be served.
+        registry.addResourceHandler("/images/default_image.png")
+                .addResourceLocations("file:default_image.png", "classpath:/static/images/default_image.png");
     }
 }
