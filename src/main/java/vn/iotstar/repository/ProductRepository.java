@@ -51,17 +51,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p WHERE p.user.id = :userId")
     List<Product> findByUserId(@Param("userId") Integer userId);
     
-    // Tìm sản phẩm trong khoảng giá sắp xếp theo giá tăng dần
-    @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice ORDER BY p.price ASC")
-    List<Product> findByPriceRangeOrderByPrice(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
-
-    // Tìm sản phẩm theo khoảng giá
-    @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice")
-    List<Product> findByPriceRange(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
-
-    // Tìm sản phẩm theo khoảng giá với phân trang
-    @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice")
-    Page<Product> findByPriceRange(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice, Pageable pageable);
 
     // Kiểm tra tên sản phẩm đã tồn tại
     boolean existsByTitleIgnoreCase(String title);
@@ -79,22 +68,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // Đếm sản phẩm theo category ID
     long countByCategoryId(Integer categoryId);
 
-    // Đếm sản phẩm theo trạng thái
-    long countByStatus(Boolean status);
-    
-    // Tìm sản phẩm hết hàng
-    @Query("SELECT p FROM Product p WHERE p.quantity = 0")
-    List<Product> findOutOfStockProducts();
-    
-    // Tìm sản phẩm sắp hết hàng (số lượng <= threshold)
-    @Query("SELECT p FROM Product p WHERE p.quantity <= :threshold AND p.quantity > 0")
-    List<Product> findLowStockProducts(@Param("threshold") Integer threshold);
-    
-    // Tìm sản phẩm có giảm giá
-    @Query("SELECT p FROM Product p WHERE p.discount > 0")
-    List<Product> findDiscountedProducts();
-    
-    // Tìm sản phẩm có giảm giá với phân trang
-    @Query("SELECT p FROM Product p WHERE p.discount > 0")
-    Page<Product> findDiscountedProducts(Pageable pageable);
 }

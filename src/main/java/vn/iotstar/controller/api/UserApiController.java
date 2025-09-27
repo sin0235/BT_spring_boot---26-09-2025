@@ -212,23 +212,4 @@ public class UserApiController {
         }
     }
 
-    @Operation(summary = "Get user by email")
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Response<User>> getUserByEmail(
-            @Parameter(description = "User email") @PathVariable String email) {
-
-        try {
-            Optional<User> user = userService.findByEmail(email);
-
-            if (user.isPresent()) {
-                return ResponseEntity.ok(Response.success("Lấy thông tin user thành công", user.get()));
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Response.notFound("Không tìm thấy user với email: " + email));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
 }

@@ -177,17 +177,4 @@ public class CategoryApiController {
         }
     }
 
-    @Operation(summary = "Get all products of a specific category")
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<Response<List<Product>>> getProductsByCategory(
-            @Parameter(description = "Category ID") @PathVariable Integer categoryId) {
-
-        try {
-            List<Product> products = productService.findByCategoryId(categoryId);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm của category thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
 }
