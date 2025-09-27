@@ -4,7 +4,6 @@ vn\iotstar\BtwebApplication.class
 vn\iotstar\controller\api\CategoryApiController.class
 vn\iotstar\config\OpenApiConfig.class
 vn\iotstar\config\StorageProperties.class
-vn\iotstar\controller\GraphQLDemoController.class
 vn\iotstar\entity\User.class
 vn\iotstar\service\CategoryService.class
 vn\iotstar\controller\AdminController.class

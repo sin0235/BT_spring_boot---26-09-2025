@@ -44,7 +44,8 @@ public class GraphQLController {
     public List<Product> getProductsByCategory(@Argument Integer categoryId) {
         Optional<Category> category = categoryService.findById(categoryId);
         if (category.isPresent()) {
-            return productService.findByUserId(category.get().getId());
+            // Return products for the given category id
+            return productService.findByCategoryId(category.get().getId());
         }
         return List.of();
     }

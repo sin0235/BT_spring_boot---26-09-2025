@@ -17,6 +17,5 @@ public interface UserService {
     boolean existsByEmail(String email);
     boolean existsByEmailAndIdNot(String email, Integer id);
     List<User> findByFullnameContaining(String name);
-    Page<User> findByFullnameContaining(String name, Pageable pageable);
     Page<User> searchByName(String name, Pageable pageable);
 }

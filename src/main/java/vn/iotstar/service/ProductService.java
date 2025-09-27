@@ -79,43 +79,20 @@ public class ProductService {
     }
     
     
-    // Price range operations
-    public List<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
-        return productRepository.findByPriceRange(minPrice, maxPrice);
-    }
 
-    public List<Product> findByPriceRangeOrderByPrice(BigDecimal minPrice, BigDecimal maxPrice) {
-        return productRepository.findByPriceRangeOrderByPrice(minPrice, maxPrice);
-    }
-
-    public Page<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
-        return productRepository.findByPriceRange(minPrice, maxPrice, pageable);
-    }
-
-    // Specialized product queries
-    public List<Product> findDiscountedProducts() {
-        return productRepository.findDiscountedProducts();
-    }
-
-    public List<Product> findOutOfStockProducts() {
-        return productRepository.findOutOfStockProducts();
-    }
-
-    public List<Product> findLowStockProducts(Integer threshold) {
-        return productRepository.findLowStockProducts(threshold);
-    }
     
-    // Validation operations
-    public boolean existsById(Integer id) {
-        return productRepository.existsById(id);
-    }
 
+    // Validation operations
     public boolean existsByTitle(String title) {
         return productRepository.existsByTitleIgnoreCase(title);
     }
 
     public boolean existsByTitleAndNotId(String title, Integer id) {
         return productRepository.existsByTitleIgnoreCaseAndIdNot(title, id);
+    }
+
+    public boolean existsById(Integer id) {
+        return productRepository.existsById(id);
     }
 
     public Product update(Product product) {

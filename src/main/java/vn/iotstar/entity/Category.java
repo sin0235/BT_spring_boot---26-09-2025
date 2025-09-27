@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "Category")
 public class Category implements Serializable {
@@ -25,6 +27,7 @@ public class Category implements Serializable {
     private String images;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<User> users;
 
     // Constructors
