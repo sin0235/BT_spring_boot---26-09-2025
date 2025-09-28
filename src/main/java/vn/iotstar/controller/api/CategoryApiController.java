@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +35,15 @@ public class CategoryApiController {
     public ResponseEntity<Response<Page<Category>>> getAllCategories(
             @Parameter(description = "Search query") @RequestParam(required = false) String q,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort by field") @RequestParam(defaultValue = "id") String sortBy,
+            @Parameter(description = "Sort direction") @RequestParam(defaultValue = "asc") String sortDir) {
         
         try {
-            Pageable pageable = PageRequest.of(page, size);
+            // Create sort object
+            Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+                Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+            Pageable pageable = PageRequest.of(page, size, sort);
             Page<Category> categories;
             
             if (q != null && !q.trim().isEmpty()) {
