@@ -69,6 +69,9 @@ public class Product implements Serializable {
     @Column(name = "status", nullable = false)
     private Boolean status = true;
 
+    @Column(name = "sort_order", nullable = false)
+    private Integer sortOrder = 0;
+
     // Constructors
     public Product() {}
 
@@ -174,6 +177,14 @@ public class Product implements Serializable {
 
     public void setStatus(Boolean status) {
         this.status = Objects.requireNonNullElse(status, true);
+    }
+
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
     // Helper method to get user ID for JSON responses

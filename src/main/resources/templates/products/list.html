@@ -27,10 +27,13 @@
                             </div>
                             <div class="col-md-3">
                                 <select class="form-select" id="sortSelect">
-                                    <option value="name">Sắp xếp theo tên</option>
+                                    <option value="title">Sắp xếp theo tên</option>
                                     <option value="price-asc">Giá: Thấp đến cao</option>
                                     <option value="price-desc">Giá: Cao đến thấp</option>
-                                    <option value="quantity">Số lượng</option>
+                                    <option value="quantity-asc">Số lượng: Thấp đến cao</option>
+                                    <option value="quantity-desc">Số lượng: Cao đến thấp</option>
+                                    <option value="createDate-desc">Mới nhất trước</option>
+                                    <option value="createDate-asc">Cũ nhất trước</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
@@ -140,7 +143,8 @@
     <script>
         let currentPage = 0;
         let currentSearch = '';
-        let currentSort = 'name';
+        let currentSort = 'title';
+        let currentSortDir = 'asc';
 
         $(document).ready(function() {
             loadProducts();
@@ -166,14 +170,22 @@
 
             // Sort select event
             $('#sortSelect').on('change', function() {
-                currentSort = $(this).val();
+                const sortValue = $(this).val();
+                if (sortValue.includes('-')) {
+                    const parts = sortValue.split('-');
+                    currentSort = parts[0];
+                    currentSortDir = parts[1];
+                } else {
+                    currentSort = sortValue;
+                    currentSortDir = 'asc';
+                }
                 currentPage = 0;
                 loadProducts();
             });
         });
 
         function loadProducts() {
-            let url = `/api/product?q=${currentSearch}&page=${currentPage}&size=10`;
+            let url = `/api/product?q=${currentSearch}&page=${currentPage}&size=10&sortBy=${currentSort}&sortDir=${currentSortDir}`;
 
             $.get(url)
                 .done(function(response) {
@@ -267,10 +279,11 @@
 
         function resetFilters() {
             currentSearch = '';
-            currentSort = 'name';
+            currentSort = 'title';
+            currentSortDir = 'asc';
             currentPage = 0;
             $('#searchInput').val('');
-            $('#sortSelect').val('name');
+            $('#sortSelect').val('title');
             loadProducts();
         }
 
