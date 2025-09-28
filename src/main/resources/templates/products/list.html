@@ -283,9 +283,6 @@
                 // Reset dropdowns to default values
                 $('#productCategoryId').val('');
                 $('#productUserId').val('');
-                $('#productStatus').val('true');
-                $('#productDiscount').val('0');
-                $('#productSortOrder').val('0');
             });
         });
 
@@ -397,9 +394,6 @@
             const title = $('#productTitle').val();
             const quantity = $('#productQuantity').val();
             const price = $('#productPrice').val();
-            const discount = $('#productDiscount').val();
-            const status = $('#productStatus').val();
-            const sortOrder = $('#productSortOrder').val();
             const categoryId = $('#productCategoryId').val();
             const userId = $('#productUserId').val();
 
@@ -419,11 +413,6 @@
                 return;
             }
 
-            if (discount !== '' && (parseInt(discount) < 0 || parseInt(discount) > 100)) {
-                alert('Giảm giá phải từ 0-100!');
-                return;
-            }
-
             if (!categoryId) {
                 alert('Vui lòng chọn danh mục!');
                 return;
@@ -440,9 +429,6 @@
             formData.append('price', price);
             formData.append('description', $('#productDescription').val());
             formData.append('images', $('#productImages').val()); // Image URL as string
-            formData.append('discount', discount || 0);
-            formData.append('status', status || true);
-            formData.append('sortOrder', sortOrder || 0);
             formData.append('categoryId', categoryId);
             formData.append('userId', userId);
 
