@@ -161,11 +161,11 @@
                                         <i class="fas fa-tag me-1"></i>
                                         Tên Category <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" class="form-control" th:field="*{catename}" 
-                                           th:classappend="${#fields.hasErrors('catename')} ? 'is-invalid'"
+                                    <input type="text" class="form-control" th:field="*{name}" 
+                                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
                                            placeholder="Nhập tên category..." required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('catename')}" 
-                                         th:errors="*{catename}">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}"
+                                         th:errors="*{name}">
                                         Tên category không hợp lệ
                                     </div>
                                     <div class="form-text">Tên category phải từ 2-255 ký tự</div>
@@ -238,7 +238,7 @@
         
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {
-            const catename = document.querySelector('[name="catename"]').value.trim();
+            const catename = document.querySelector('[name="name"]').value.trim();
             
             if (catename.length < 2) {
                 e.preventDefault();
