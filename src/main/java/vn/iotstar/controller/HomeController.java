@@ -11,8 +11,4 @@ public class HomeController {
         return "dashboard";
     }
 
-    @GetMapping("/products")
-    public String products() {
-        return "products/list";
-    }
 }

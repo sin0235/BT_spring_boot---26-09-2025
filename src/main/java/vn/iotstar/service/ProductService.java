@@ -26,11 +26,27 @@ public class ProductService {
     
     // Basic CRUD operations
     public List<Product> findAll() {
-        return productRepository.findAllOrderByCreateDateDesc();
+        logger.debug("findAll() called");
+        try {
+            List<Product> products = productRepository.findAllOrderByCreateDateDesc();
+            logger.info("findAll() returned {} products", products == null ? 0 : products.size());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in findAll()", e);
+            throw e;
+        }
     }
     
     public Page<Product> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable);
+        logger.debug("findAll(pageable) called with page: {}, size: {}", pageable.getPageNumber(), pageable.getPageSize());
+        try {
+            Page<Product> products = productRepository.findAll(pageable);
+            logger.info("findAll(pageable) returned {} products", products == null ? 0 : products.getTotalElements());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in findAll(pageable)", e);
+            throw e;
+        }
     }
     
     // GraphQL specific methods
@@ -57,37 +73,92 @@ public class ProductService {
     
     // Save operations
     public Product save(Product product) {
-        return productRepository.save(product);
+        logger.debug("save() called for product: {}", product.getTitle());
+        try {
+            Product savedProduct = productRepository.save(product);
+            logger.info("save() successful for product ID: {}", savedProduct.getId());
+            return savedProduct;
+        } catch (Exception e) {
+            logger.error("Error in save() for product: {}", product.getTitle(), e);
+            throw e;
+        }
     }
     
     // Delete operations
     public void deleteById(Integer id) {
-        productRepository.deleteById(id);
+        logger.debug("deleteById() called for product ID: {}", id);
+        try {
+            productRepository.deleteById(id);
+            logger.info("deleteById() successful for product ID: {}", id);
+        } catch (Exception e) {
+            logger.error("Error in deleteById() for product ID: {}", id, e);
+            throw e;
+        }
     }
     
     // Search operations with pagination
     public Page<Product> searchByName(String name, Pageable pageable) {
-        if (name == null || name.trim().isEmpty()) {
-            return productRepository.findAll(pageable);
+        logger.debug("searchByName() called with name: {}, page: {}, size: {}",
+                name, pageable.getPageNumber(), pageable.getPageSize());
+        try {
+            Page<Product> products;
+            if (name == null || name.trim().isEmpty()) {
+                products = productRepository.findAll(pageable);
+            } else {
+                products = productRepository.findByTitleContainingIgnoreCase(name.trim(), pageable);
+            }
+            logger.info("searchByName() returned {} products", products == null ? 0 : products.getTotalElements());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in searchByName() for name: {}", name, e);
+            throw e;
         }
-        return productRepository.findByTitleContainingIgnoreCase(name.trim(), pageable);
     }
     
     
     public List<Product> findByCategoryId(Integer categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+        logger.debug("findByCategoryId() called for category ID: {}", categoryId);
+        try {
+            List<Product> products = productRepository.findByCategoryId(categoryId);
+            logger.info("findByCategoryId() returned {} products for category ID: {}", products == null ? 0 : products.size(), categoryId);
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in findByCategoryId() for category ID: {}", categoryId, e);
+            throw e;
+        }
     }
 
     public Page<Product> findByCategoryId(Integer categoryId, Pageable pageable) {
-        return productRepository.findByCategoryId(categoryId, pageable);
+        logger.debug("findByCategoryId(pageable) called for category ID: {}, page: {}, size: {}",
+                categoryId, pageable.getPageNumber(), pageable.getPageSize());
+        try {
+            Page<Product> products = productRepository.findByCategoryId(categoryId, pageable);
+            logger.info("findByCategoryId(pageable) returned {} products for category ID: {}",
+                    products == null ? 0 : products.getTotalElements(), categoryId);
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in findByCategoryId(pageable) for category ID: {}", categoryId, e);
+            throw e;
+        }
     }
     
     // Search by name and category
     public Page<Product> searchByNameAndCategory(String name, Integer categoryId, Pageable pageable) {
-        if (name == null || name.trim().isEmpty()) {
-            return productRepository.findByCategoryId(categoryId, pageable);
+        logger.debug("searchByNameAndCategory() called with name: {}, categoryId: {}, page: {}, size: {}",
+                name, categoryId, pageable.getPageNumber(), pageable.getPageSize());
+        try {
+            Page<Product> products;
+            if (name == null || name.trim().isEmpty()) {
+                products = productRepository.findByCategoryId(categoryId, pageable);
+            } else {
+                products = productRepository.findByTitleContainingIgnoreCaseAndCategoryId(name.trim(), categoryId, pageable);
+            }
+            logger.info("searchByNameAndCategory() returned {} products", products == null ? 0 : products.getTotalElements());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in searchByNameAndCategory() for name: {}, categoryId: {}", name, categoryId, e);
+            throw e;
         }
-        return productRepository.findByTitleContainingIgnoreCaseAndCategoryId(name.trim(), categoryId, pageable);
     }
     
     

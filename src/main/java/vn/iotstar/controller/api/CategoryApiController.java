@@ -16,6 +16,7 @@ import vn.iotstar.model.Response;
 import vn.iotstar.service.CategoryService;
 import vn.iotstar.service.StorageService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,9 +30,21 @@ public class CategoryApiController {
     @Autowired
     private StorageService storageService;
     
+    @Operation(summary = "Get all categories")
+    @GetMapping("/all")
+    public ResponseEntity<Response<List<Category>>> getAllCategories() {
+        try {
+            List<Category> categories = categoryService.findAll();
+            return ResponseEntity.ok(Response.success("Lấy danh sách danh mục thành công", categories));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.error("Lỗi server: " + e.getMessage()));
+        }
+    }
+
     @Operation(summary = "Get all categories with pagination and search")
     @GetMapping
-    public ResponseEntity<Response<Page<Category>>> getAllCategories(
+    public ResponseEntity<Response<Page<Category>>> getAllCategoriesPaginated(
             @Parameter(description = "Search query") @RequestParam(required = false) String q,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {

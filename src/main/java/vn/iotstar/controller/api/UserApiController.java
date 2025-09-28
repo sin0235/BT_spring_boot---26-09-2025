@@ -30,9 +30,21 @@ public class UserApiController {
     @Autowired
     private CategoryService categoryService;
 
+    @Operation(summary = "Get all users")
+    @GetMapping("/all")
+    public ResponseEntity<Response<List<User>>> getAllUsers() {
+        try {
+            List<User> users = userService.findAll();
+            return ResponseEntity.ok(Response.success("Lấy danh sách người dùng thành công", users));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Response.error("Lỗi server: " + e.getMessage()));
+        }
+    }
+
     @Operation(summary = "Get all users with pagination and search")
     @GetMapping
-    public ResponseEntity<Response<Page<User>>> getAllUsers(
+    public ResponseEntity<Response<Page<User>>> getAllUsersPaginated(
             @Parameter(description = "Search query") @RequestParam(required = false) String q,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {

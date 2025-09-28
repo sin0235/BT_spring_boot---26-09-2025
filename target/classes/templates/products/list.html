@@ -128,6 +128,22 @@
                             <label for="editProductDescription" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="editProductDescription" name="description" rows="3"></textarea>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editProductCategoryId" class="form-label">Danh mục <span class="text-danger">*</span></label>
+                                <select class="form-control" id="editProductCategoryId" name="categoryId" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <!-- Categories will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editProductUserId" class="form-label">Người tạo <span class="text-danger">*</span></label>
+                                <select class="form-control" id="editProductUserId" name="userId" required>
+                                    <option value="">Chọn người tạo</option>
+                                    <!-- Users will be loaded here -->
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -146,8 +162,57 @@
         let currentSort = 'title';
         let currentSortDir = 'asc';
 
+        let categories = [];
+        let users = [];
+
+        // Load categories and users
+        function loadCategoriesAndUsers() {
+            // Load categories
+            $.get('/api/category/all')
+                .done(function(response) {
+                    if (response.status === 'success') {
+                        categories = response.body || [];
+                        updateCategoryDropdowns();
+                    }
+                });
+
+            // Load users
+            $.get('/api/user/all')
+                .done(function(response) {
+                    if (response.status === 'success') {
+                        users = response.body || [];
+                        updateUserDropdowns();
+                    }
+                });
+        }
+
+        function updateCategoryDropdowns() {
+            const categorySelects = ['#productCategoryId', '#editProductCategoryId'];
+            categorySelects.forEach(function(selector) {
+                const $select = $(selector);
+                $select.empty();
+                $select.append('<option value="">Chọn danh mục</option>');
+                categories.forEach(function(category) {
+                    $select.append('<option value="' + category.id + '">' + category.name + '</option>');
+                });
+            });
+        }
+
+        function updateUserDropdowns() {
+            const userSelects = ['#productUserId', '#editProductUserId'];
+            userSelects.forEach(function(selector) {
+                const $select = $(selector);
+                $select.empty();
+                $select.append('<option value="">Chọn người tạo</option>');
+                users.forEach(function(user) {
+                    $select.append('<option value="' + user.id + '">' + user.fullname + ' (' + user.email + ')</option>');
+                });
+            });
+        }
+
         $(document).ready(function() {
             loadProducts();
+            loadCategoriesAndUsers();
 
             // Add product form submit
             $('#addProductForm').on('submit', function(e) {
@@ -182,6 +247,12 @@
                 currentPage = 0;
                 loadProducts();
             });
+
+            // Show edit modal - update dropdowns
+            $('#editProductModal').on('show.bs.modal', function() {
+                updateCategoryDropdowns();
+                updateUserDropdowns();
+            });
         });
 
         function loadProducts() {
@@ -189,12 +260,13 @@
 
             $.get(url)
                 .done(function(response) {
+                    console.log('API Response:', response);
                     if (response.status === 'success') {
-                        const page = response.body || response;
+                        const page = response.body;
                         displayProducts(page.content || []);
                         displayPagination(page);
                     } else {
-                        alert('Lỗi: ' + response.message);
+                        alert('Lỗi: ' + (response.message || 'Không thể tải dữ liệu'));
                     }
                 })
                 .fail(function() {
@@ -288,11 +360,45 @@
         }
 
         function addProduct() {
+            const title = $('#productTitle').val();
+            const quantity = $('#productQuantity').val();
+            const price = $('#productPrice').val();
+            const categoryId = $('#productCategoryId').val();
+            const userId = $('#productUserId').val();
+
+            // Validation
+            if (!title || title.length < 2 || title.length > 255) {
+                alert('Tên sản phẩm phải từ 2-255 ký tự!');
+                return;
+            }
+
+            if (!quantity || parseInt(quantity) < 0) {
+                alert('Số lượng phải >= 0!');
+                return;
+            }
+
+            if (!price || parseFloat(price) <= 0) {
+                alert('Giá sản phẩm phải > 0!');
+                return;
+            }
+
+            if (!categoryId) {
+                alert('Vui lòng chọn danh mục!');
+                return;
+            }
+
+            if (!userId) {
+                alert('Vui lòng chọn người tạo!');
+                return;
+            }
+
             let formData = new FormData();
-            formData.append('title', $('#productTitle').val());
-            formData.append('quantity', $('#productQuantity').val());
-            formData.append('price', $('#productPrice').val());
+            formData.append('title', title);
+            formData.append('quantity', quantity);
+            formData.append('price', price);
             formData.append('description', $('#productDescription').val());
+            formData.append('categoryId', categoryId);
+            formData.append('userId', userId);
 
             // Image upload disabled: don't append image file
 
@@ -304,13 +410,14 @@
                 contentType: false
             })
             .done(function(response) {
+                console.log('Add Product Response:', response);
                 if (response.status === 'created' || response.status === 'success') {
                     alert('Thêm sản phẩm thành công!');
                     $('#addProductModal').modal('hide');
                     $('#addProductForm')[0].reset();
                     loadProducts();
                 } else {
-                    alert('Lỗi: ' + response.message);
+                    alert('Lỗi: ' + (response.message || 'Không thể thêm sản phẩm'));
                 }
             })
             .fail(function() {
@@ -321,30 +428,68 @@
         function editProduct(id) {
             $.get('/api/product/' + id)
                 .done(function(response) {
-                    if (response.success) {
-                        let product = response.data;
+                    console.log('Edit Product Response:', response);
+                    if (response.status === 'success') {
+                        let product = response.body;
                         $('#editProductId').val(product.id);
                         $('#editProductTitle').val(product.title);
                         $('#editProductQuantity').val(product.quantity);
                         $('#editProductPrice').val(product.price);
                         $('#editProductDescription').val(product.description);
+                        $('#editProductCategoryId').val(product.categoryId);
+                        $('#editProductUserId').val(product.userId);
                         $('#editProductModal').modal('show');
                     } else {
-                        alert('Lỗi: ' + response.message);
+                        alert('Lỗi: ' + (response.message || 'Không thể tải thông tin sản phẩm'));
                     }
                 })
-                .fail(function() {
+                .fail(function(xhr, status, error) {
+                    console.error('Error loading product:', xhr.responseText);
                     alert('Lỗi khi tải thông tin sản phẩm');
                 });
         }
 
         function updateProduct() {
-            let id = $('#editProductId').val();
+            const id = $('#editProductId').val();
+            const title = $('#editProductTitle').val();
+            const quantity = $('#editProductQuantity').val();
+            const price = $('#editProductPrice').val();
+            const categoryId = $('#editProductCategoryId').val();
+            const userId = $('#editProductUserId').val();
+
+            // Validation
+            if (!title || title.length < 2 || title.length > 255) {
+                alert('Tên sản phẩm phải từ 2-255 ký tự!');
+                return;
+            }
+
+            if (!quantity || parseInt(quantity) < 0) {
+                alert('Số lượng phải >= 0!');
+                return;
+            }
+
+            if (!price || parseFloat(price) <= 0) {
+                alert('Giá sản phẩm phải > 0!');
+                return;
+            }
+
+            if (!categoryId) {
+                alert('Vui lòng chọn danh mục!');
+                return;
+            }
+
+            if (!userId) {
+                alert('Vui lòng chọn người tạo!');
+                return;
+            }
+
             let formData = new FormData();
-            formData.append('title', $('#editProductTitle').val());
-            formData.append('quantity', $('#editProductQuantity').val());
-            formData.append('price', $('#editProductPrice').val());
+            formData.append('title', title);
+            formData.append('quantity', quantity);
+            formData.append('price', price);
             formData.append('description', $('#editProductDescription').val());
+            formData.append('categoryId', categoryId);
+            formData.append('userId', userId);
 
             $.ajax({
                 url: '/api/product/' + id,
@@ -354,12 +499,13 @@
                 contentType: false
             })
             .done(function(response) {
-                if (response.success) {
+                console.log('Update Product Response:', response);
+                if (response.status === 'success') {
                     alert('Cập nhật sản phẩm thành công!');
                     $('#editProductModal').modal('hide');
                     loadProducts();
                 } else {
-                    alert('Lỗi: ' + response.message);
+                    alert('Lỗi: ' + (response.message || 'Không thể cập nhật sản phẩm'));
                 }
             })
             .fail(function() {
@@ -374,11 +520,12 @@
                     type: 'DELETE'
                 })
                 .done(function(response) {
-                    if (response.success) {
+                    console.log('Delete Product Response:', response);
+                    if (response.status === 'success') {
                         alert('Xóa sản phẩm thành công!');
                         loadProducts();
                     } else {
-                        alert('Lỗi: ' + response.message);
+                        alert('Lỗi: ' + (response.message || 'Không thể xóa sản phẩm'));
                     }
                 })
                 .fail(function() {
