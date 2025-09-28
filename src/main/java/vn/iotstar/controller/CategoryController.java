@@ -9,17 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import vn.iotstar.entity.Category;
 import vn.iotstar.service.CategoryService;
 
 import jakarta.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Optional;
 
 @Controller
@@ -106,7 +100,6 @@ public class CategoryController {
     @PostMapping("/save")
     public String saveCategory(@Valid @ModelAttribute Category category,
                               BindingResult result,
-                              @RequestParam(value = "iconFile", required = false) MultipartFile iconFile,
                               RedirectAttributes redirectAttributes,
                               Model model) {
         
@@ -131,30 +124,7 @@ public class CategoryController {
                     return "categories/form";
                 }
             }
-            
-            // Handle file upload
-            if (iconFile != null && !iconFile.isEmpty()) {
-                try {
-                    String fileName = System.currentTimeMillis() + "_" + iconFile.getOriginalFilename();
-                    String uploadPath = System.getProperty("user.dir") + File.separator + UPLOAD_DIR;
-                    
-                    // Create upload directory if it doesn't exist
-                    File uploadDir = new File(uploadPath);
-                    if (!uploadDir.exists()) {
-                        uploadDir.mkdirs();
-                    }
-                    
-                    Path filePath = Paths.get(uploadPath + fileName);
-                    Files.write(filePath, iconFile.getBytes());
-                    
-                    category.setImages(UPLOAD_DIR + fileName);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi tải lên hình ảnh");
-                    return "redirect:/categories";
-                }
-            }
-            
+
             categoryService.save(category);
             redirectAttributes.addFlashAttribute("successMessage",
                 category.getId() == null ? "Tạo category thành công!" : "Cập nhật category thành công!");
