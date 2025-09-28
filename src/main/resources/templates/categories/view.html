@@ -87,7 +87,8 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-2 text-center">
-                    <img src="/uploads/avatars/avatar.jpg" alt="Profile" class="profile-img" 
+                <img src="/uploads/avatars/avatar.jpg" alt="Profile" class="profile-img" 
+                    onerror="this.src='/images/default_image.png'">
                          onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=TP'">
                 </div>
                 <div class="col-md-8">
@@ -145,26 +146,10 @@
                             </h5>
                         </div>
                         <div class="card-body text-center">
-                            <div th:if="${category.iconPath != null and !category.iconPath.isEmpty()}">
-                                <img th:src="@{'/' + category.iconPath}" 
-                                     alt="Category Icon" class="category-icon img-fluid">
-                                <div class="mt-3">
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-check me-1"></i>Có icon
-                                    </span>
-                                </div>
-                            </div>
-                            <div th:if="${category.iconPath == null or category.iconPath.isEmpty()}">
-                                <div class="d-flex align-items-center justify-content-center" style="height: 200px;">
-                                    <div class="text-center text-muted">
-                                        <i class="fas fa-image fa-4x mb-3"></i>
-                                        <p class="mb-0">Chưa có icon</p>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <span class="badge bg-secondary">
-                                        <i class="fas fa-times me-1"></i>Không có icon
-                                    </span>
+                            <!-- Category icons are not displayed (images are hidden as requested) -->
+                            <div class="d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <div class="text-center text-muted">
+                                    <i class="fas fa-tags fa-4x mb-3"></i>
                                 </div>
                             </div>
                         </div>
@@ -198,15 +183,7 @@
                                     <strong th:text="${category.catename}">Category Name</strong>
                                 </div>
                             </div>
-                            <hr th:if="${category.iconFilename != null and !category.iconFilename.isEmpty()}">
-                            <div class="row" th:if="${category.iconFilename != null and !category.iconFilename.isEmpty()}">
-                                <div class="col-sm-3">
-                                    <h6 class="mb-0"><i class="fas fa-file me-1"></i>Tên file icon</h6>
-                                </div>
-                                <div class="col-sm-9 text-secondary">
-                                    <code th:text="${category.iconFilename}">filename.jpg</code>
-                                </div>
-                            </div>
+                            <!-- Icon filename is hidden per request -->
                         </div>
                     </div>
 

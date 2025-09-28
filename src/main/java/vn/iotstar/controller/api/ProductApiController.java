@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,10 +43,15 @@ public class ProductApiController {
             @Parameter(description = "Search query") @RequestParam(required = false) String q,
             @Parameter(description = "Category ID filter") @RequestParam(required = false) Integer categoryId,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort by field") @RequestParam(defaultValue = "id") String sortBy,
+            @Parameter(description = "Sort direction") @RequestParam(defaultValue = "asc") String sortDir) {
         
         try {
-            Pageable pageable = PageRequest.of(page, size);
+            // Create sort object
+            Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+                Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+            Pageable pageable = PageRequest.of(page, size, sort);
             Page<Product> products;
             
             if (categoryId != null) {
@@ -251,72 +257,4 @@ public class ProductApiController {
         }
     }
 
-    @Operation(summary = "Get all products of a specific category")
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<Response<List<Product>>> getProductsByCategory(
-            @Parameter(description = "Category ID") @PathVariable Integer categoryId) {
-
-        try {
-            List<Product> products = productService.findByCategoryId(categoryId);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm của category thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get products by price range")
-    @GetMapping("/price-range")
-    public ResponseEntity<Response<List<Product>>> getProductsByPriceRange(
-            @Parameter(description = "Minimum price") @RequestParam BigDecimal minPrice,
-            @Parameter(description = "Maximum price") @RequestParam BigDecimal maxPrice) {
-
-        try {
-            List<Product> products = productService.findByPriceRangeOrderByPrice(minPrice, maxPrice);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm trong khoảng giá thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get discounted products")
-    @GetMapping("/discounted")
-    public ResponseEntity<Response<List<Product>>> getDiscountedProducts() {
-
-        try {
-            List<Product> products = productService.findDiscountedProducts();
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm có giảm giá thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get out of stock products")
-    @GetMapping("/out-of-stock")
-    public ResponseEntity<Response<List<Product>>> getOutOfStockProducts() {
-
-        try {
-            List<Product> products = productService.findOutOfStockProducts();
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm hết hàng thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
-
-    @Operation(summary = "Get low stock products")
-    @GetMapping("/low-stock")
-    public ResponseEntity<Response<List<Product>>> getLowStockProducts(
-            @Parameter(description = "Stock threshold") @RequestParam(defaultValue = "5") Integer threshold) {
-
-        try {
-            List<Product> products = productService.findLowStockProducts(threshold);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm sắp hết hàng thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
 }

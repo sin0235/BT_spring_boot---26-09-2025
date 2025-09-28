@@ -4,7 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vn.iotstar.entity.Category;
 import vn.iotstar.entity.Product;
 import vn.iotstar.entity.User;
@@ -29,6 +32,8 @@ public class GraphQLController {
     @Autowired
     private UserService userService;
 
+    private static final Logger logger = LoggerFactory.getLogger(GraphQLController.class);
+
     // Product Queries
     @QueryMapping
     public List<Product> getAllProducts() {
@@ -37,14 +42,23 @@ public class GraphQLController {
 
     @QueryMapping
     public List<Product> getProductsSortedByPrice() {
-        return productService.findAllOrderByPriceAsc();
+        logger.debug("GraphQL getProductsSortedByPrice called");
+        try {
+            List<Product> products = productService.findAllOrderByPriceAsc();
+            logger.debug("GraphQL getProductsSortedByPrice returning {} products", products == null ? 0 : products.size());
+            return products;
+        } catch (Exception e) {
+            logger.error("Error in getProductsSortedByPrice", e);
+            throw e;
+        }
     }
 
     @QueryMapping
     public List<Product> getProductsByCategory(@Argument Integer categoryId) {
         Optional<Category> category = categoryService.findById(categoryId);
         if (category.isPresent()) {
-            return productService.findByUserId(category.get().getId());
+            // Return products for the given category id
+            return productService.findByCategoryId(category.get().getId());
         }
         return List.of();
     }
@@ -285,5 +299,12 @@ public class GraphQLController {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // Schema mapping to convert BigDecimal price to Double for GraphQL Float scalar
+    @SchemaMapping(typeName = "Product", field = "price")
+    public Double price(Product product) {
+        if (product.getPrice() == null) return null;
+        return product.getPrice().doubleValue();
     }
 }

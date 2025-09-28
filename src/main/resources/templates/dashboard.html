@@ -213,24 +213,25 @@
             // Load total products
             $.get('/api/product')
                 .done(function(response) {
-                    if (response.success) {
-                        $('#totalProducts').text(response.data.totalElements);
+                    if (response.status === 'success') {
+                        // paginated response: totalElements is provided as top-level field
+                        $('#totalProducts').text(response.totalElements || (response.body && response.body.totalElements) || 0);
                     }
                 });
 
             // Load total categories
             $.get('/api/category')
                 .done(function(response) {
-                    if (response.success) {
-                        $('#totalCategories').text(response.data.totalElements);
+                    if (response.status === 'success') {
+                        $('#totalCategories').text(response.totalElements || (response.body && response.body.totalElements) || 0);
                     }
                 });
 
             // Load total users
             $.get('/api/user')
                 .done(function(response) {
-                    if (response.success) {
-                        $('#totalUsers').text(response.data.totalElements);
+                    if (response.status === 'success') {
+                        $('#totalUsers').text(response.totalElements || (response.body && response.body.totalElements) || 0);
                     }
                 });
         }
@@ -238,8 +239,9 @@
         function loadProductsByPrice() {
             $.get('/api/product/sorted-by-price')
                 .done(function(response) {
-                    if (response.success) {
-                        displayProductsByPrice(response.data);
+                    if (response.status === 'success') {
+                        // body contains the list of products
+                        displayProductsByPrice(response.body || []);
                     } else {
                         $('#productsByPriceContainer').html('<div class="col-12"><div class="alert alert-danger">Lỗi: ' + response.message + '</div></div>');
                     }
@@ -261,9 +263,8 @@
                         currency: 'VND'
                     }).format(product.price);
 
-                    let imageHtml = product.images ?
-                        '<img src="' + product.images + '" class="product-image w-100" alt="' + product.title + '">' :
-                        '<div class="product-image w-100 d-flex align-items-center justify-content-center bg-light"><i class="fas fa-image fa-3x text-muted"></i></div>';
+                    // Do not display product images on dashboard — show an icon placeholder instead
+                    let imageHtml = '<div class="product-image w-100 d-flex align-items-center justify-content-center bg-light"><i class="fas fa-box fa-2x text-muted"></i></div>';
 
                     html += '<div class="col-md-4 col-lg-3 mb-4">';
                     html += '<div class="card product-card h-100">';
@@ -292,16 +293,15 @@
         function viewProductDetail(productId) {
             $.get('/api/product/' + productId)
                 .done(function(response) {
-                    if (response.success) {
-                        let product = response.data;
+                        if (response.status === 'success') {
+                            let product = response.body;
                         let price = new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND'
                         }).format(product.price);
 
-                        let imageHtml = product.images ?
-                            '<img src="' + product.images + '" class="img-fluid rounded" alt="' + product.title + '">' :
-                            '<div class="text-center p-4 bg-light rounded"><i class="fas fa-image fa-4x text-muted"></i></div>';
+                        // In product detail modal do not load image — show placeholder
+                        let imageHtml = '<div class="text-center p-4 bg-light rounded"><i class="fas fa-box fa-4x text-muted"></i></div>';
 
                         let detailHtml = `
                             <div class="row">

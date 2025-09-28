@@ -2,13 +2,16 @@ package vn.iotstar.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import vn.iotstar.entity.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+
 public interface IProductService {
+
     
     // Basic CRUD operations
     List<Product> findAll();
@@ -18,6 +21,7 @@ public interface IProductService {
     void deleteById(Integer id);
     
     // GraphQL specific methods
+
     List<Product> findAllOrderByPriceAsc();
     List<Product> findByUserId(Integer userId);
     
@@ -43,6 +47,7 @@ public interface IProductService {
     boolean existsByTitleAndNotId(String title, Integer id);
 
     Product update(Product product);
+
     
     // Count operations
     long count();

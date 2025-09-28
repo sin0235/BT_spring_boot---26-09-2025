@@ -7,18 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.iotstar.entity.Category;
-import vn.iotstar.entity.Product;
 import vn.iotstar.model.Response;
 import vn.iotstar.service.CategoryService;
-import vn.iotstar.service.ProductService;
 import vn.iotstar.service.StorageService;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,10 +26,7 @@ public class CategoryApiController {
     
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private ProductService productService;
-
+    
     @Autowired
     private StorageService storageService;
     
@@ -40,10 +35,15 @@ public class CategoryApiController {
     public ResponseEntity<Response<Page<Category>>> getAllCategories(
             @Parameter(description = "Search query") @RequestParam(required = false) String q,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
-            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Page size") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "Sort by field") @RequestParam(defaultValue = "id") String sortBy,
+            @Parameter(description = "Sort direction") @RequestParam(defaultValue = "asc") String sortDir) {
         
         try {
-            Pageable pageable = PageRequest.of(page, size);
+            // Create sort object
+            Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+                Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+            Pageable pageable = PageRequest.of(page, size, sort);
             Page<Category> categories;
             
             if (q != null && !q.trim().isEmpty()) {
@@ -177,17 +177,4 @@ public class CategoryApiController {
         }
     }
 
-    @Operation(summary = "Get all products of a specific category")
-    @GetMapping("/{categoryId}/products")
-    public ResponseEntity<Response<List<Product>>> getProductsByCategory(
-            @Parameter(description = "Category ID") @PathVariable Integer categoryId) {
-
-        try {
-            List<Product> products = productService.findByCategoryId(categoryId);
-            return ResponseEntity.ok(Response.success("Lấy danh sách sản phẩm của category thành công", products));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Response.error("Lỗi server: " + e.getMessage()));
-        }
-    }
 }
