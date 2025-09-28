@@ -7,6 +7,7 @@ vn\iotstar\config\OpenApiConfig.class
 vn\iotstar\config\StorageProperties.class
 vn\iotstar\entity\User.class
 vn\iotstar\service\CategoryService.class
+vn\iotstar\controller\UserController.class
 vn\iotstar\controller\AdminController.class
 vn\iotstar\controller\api\UserApiController.class
 vn\iotstar\entity\Product.class

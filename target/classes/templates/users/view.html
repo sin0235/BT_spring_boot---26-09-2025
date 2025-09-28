@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết User</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 30px 0;
+        }
+
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-left: 4px solid #667eea;
+        }
+
+        .badge-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                <img src="/uploads/avatars/avatar.jpg" alt="Profile" class="profile-img"
+                    onerror="this.src='/images/default_image.png'">
+                         onerror="this.src='https://via.placeholder.com/60x60/667eea/ffffff?text=TP'">
+                </div>
+                <div class="col-md-8">
+                    <h1 class="navbar-brand mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Quản Lý Users
+                    </h1>
+                </div>
+                <div class="col-md-2 text-end">
+                    <a href="/users" class="btn btn-outline-light">
+                        <i class="fas fa-home me-1"></i>
+                        Trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/users">Danh sách Users</a></li>
+                    <li class="breadcrumb-item active">Chi tiết User</li>
+                </ol>
+            </nav>
+
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-eye me-2"></i>
+                    Chi tiết User
+                </h2>
+                <div>
+                    <a th:href="@{/users/edit/{id}(id=${user.id})}" class="btn btn-warning me-2">
+                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                    </a>
+                    <a href="/users" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="row">
+                <div class="col-md-4">
+                    <!-- User Avatar -->
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <img th:src="@{/uploads/avatars/avatar.jpg}"
+                                 th:alt="${user.fullname}"
+                                 class="user-avatar mb-3"
+                                 onerror="this.src='https://via.placeholder.com/120x120/667eea/ffffff?text=' + this.alt.charAt(0)">
+                            <h4 th:text="${user.fullname}">User Name</h4>
+                            <p class="text-muted" th:text="${user.email}">user@example.com</p>
+                            <span class="badge-custom" th:if="${user.phone}">
+                                <i class="fas fa-phone me-1"></i>
+                                <span th:text="${user.phone}">0123456789</span>
+                            </span>
+                            <span class="badge-custom" th:unless="${user.phone}">
+                                <i class="fas fa-phone me-1"></i>
+                                Chưa cập nhật
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <!-- User Details -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Thông tin chi tiết
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-id-badge fa-2x text-primary me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">ID User</h6>
+                                                <p class="mb-0 text-muted" th:text="${user.id}">1</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-user fa-2x text-success me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">Họ tên</h6>
+                                                <p class="mb-0 text-muted" th:text="${user.fullname}">User Name</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-envelope fa-2x text-info me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">Email</h6>
+                                                <p class="mb-0 text-muted" th:text="${user.email}">user@example.com</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="info-card p-3 mb-3">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fas fa-phone fa-2x text-warning me-3"></i>
+                                            <div>
+                                                <h6 class="mb-1">Số điện thoại</h6>
+                                                <p class="mb-0 text-muted" th:text="${user.phone != null ? user.phone : 'Chưa cập nhật'}">0123456789</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Categories -->
+                            <div th:if="${user.categories != null and !user.categories.empty}" class="mt-4">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-tags me-2 text-primary"></i>
+                                    Danh mục quan tâm
+                                </h6>
+                                <div class="row">
+                                    <div th:each="category : ${user.categories}" class="col-md-4 mb-2">
+                                        <span class="badge bg-primary px-3 py-2">
+                                            <i class="fas fa-tag me-1"></i>
+                                            <span th:text="${category.name}">Category Name</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div th:if="${user.categories == null or user.categories.empty}" class="mt-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    User này chưa có danh mục quan tâm nào.
+                                </div>
+                            </div>
+
+                            <!-- Products -->
+                            <div th:if="${user.products != null and !user.products.empty}" class="mt-4">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-box me-2 text-success"></i>
+                                    Sản phẩm đã tạo (<span th:text="${user.products.size()}">0</span>)
+                                </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Giá</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="product : ${user.products}">
+                                                <td th:text="${product.id}">1</td>
+                                                <td th:text="${product.name}">Product Name</td>
+                                                <td th:text="${#numbers.formatDecimal(product.price, 0, 2)} + ' VNĐ'">100,000 VNĐ</td>
+                                                <td>
+                                                    <span class="badge bg-success" th:if="${product.status}">Hoạt động</span>
+                                                    <span class="badge bg-secondary" th:unless="${product.status}">Không hoạt động</span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div th:if="${user.products == null or user.products.empty}" class="mt-4">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    User này chưa tạo sản phẩm nào.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Thông tin sinh viên</h5>
+                    <p class="mb-1"><strong>Họ tên:</strong> Trần Phúc Toàn</p>
+                    <p class="mb-1"><strong>MSSV:</strong> 23110344</p>
+                    <p class="mb-0"><strong>Lớp:</strong> 231102A</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5><i class="fas fa-info-circle me-2"></i>Dự án</h5>
+                    <p class="mb-1"><strong>Môn học:</strong> Lập trình Web</p>
+                    <p class="mb-1"><strong>Chủ đề:</strong> User Management với Spring Boot</p>
+                    <p class="mb-0"><strong>Năm:</strong> 2025</p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <small>&copy; 2025 Trần Phúc Toàn - 23110344</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

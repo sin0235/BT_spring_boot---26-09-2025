@@ -11,7 +11,7 @@ public class AdminController {
     
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
-        model.addAttribute("title", "Admin Dashboard - Category & Product Management");
+        model.addAttribute("title", "Admin Dashboard - Category, Product & User Management");
         return "admin/dashboard";
     }
     

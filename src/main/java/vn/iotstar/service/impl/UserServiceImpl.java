@@ -73,4 +73,12 @@ public class UserServiceImpl implements UserService {
         }
         return null; // Will implement when needed
     }
+
+    // Method for batch loading users by category
+    public List<User> findByCategoryId(Integer categoryId) {
+        // This would require a custom repository method
+        // For now, return empty list to avoid N+1 queries
+        return List.of();
+    }
+
 }
