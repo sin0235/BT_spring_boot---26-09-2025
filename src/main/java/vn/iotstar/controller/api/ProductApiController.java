@@ -12,9 +12,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import vn.iotstar.entity.Category;
 import vn.iotstar.entity.Product;
 import vn.iotstar.entity.User;
 import vn.iotstar.model.Response;
+import vn.iotstar.service.CategoryService;
 import vn.iotstar.service.ProductService;
 import vn.iotstar.service.StorageService;
 import vn.iotstar.service.UserService;
@@ -33,6 +35,9 @@ public class ProductApiController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @Autowired
     private StorageService storageService;
@@ -105,7 +110,9 @@ public class ProductApiController {
             @Parameter(description = "Description") @RequestParam(required = false) String description,
             @Parameter(description = "Price") @RequestParam BigDecimal price,
             @Parameter(description = "User ID") @RequestParam Integer userId,
-            @Parameter(description = "Product image") @RequestParam(required = false) MultipartFile images) {
+            @Parameter(description = "Category ID") @RequestParam(required = false) Integer categoryId,
+            @Parameter(description = "Product image URL") @RequestParam(required = false) String images,
+            @Parameter(description = "Product image file") @RequestParam(required = false) MultipartFile imageFile) {
 
         try {
             // Validate required fields
@@ -149,10 +156,23 @@ public class ProductApiController {
             product.setPrice(price);
             product.setUser(user.get());
 
-            // Handle image upload
-            if (images != null && !images.isEmpty()) {
+            // Set category if categoryId is provided
+            if (categoryId != null) {
+                Optional<Category> category = categoryService.findById(categoryId);
+                if (category.isPresent()) {
+                    product.setCategory(category.get());
+                    product.setCategoryId(categoryId);
+                }
+            }
+
+            // Handle images - can be URL string or file upload
+            if (images != null && !images.trim().isEmpty()) {
+                // If it's a URL string
+                product.setImages(images.trim());
+            } else if (imageFile != null && !imageFile.isEmpty()) {
+                // If it's a file upload
                 try {
-                    String imageFilename = storageService.store(images, "prod_");
+                    String imageFilename = storageService.store(imageFile, "prod_");
                     product.setImages("/uploads/" + imageFilename);
                 } catch (Exception e) {
                     return ResponseEntity.badRequest()
@@ -179,7 +199,9 @@ public class ProductApiController {
             @Parameter(description = "Description") @RequestParam(required = false) String description,
             @Parameter(description = "Price") @RequestParam BigDecimal price,
             @Parameter(description = "User ID") @RequestParam Integer userId,
-            @Parameter(description = "Product image") @RequestParam(required = false) MultipartFile images) {
+            @Parameter(description = "Category ID") @RequestParam(required = false) Integer categoryId,
+            @Parameter(description = "Product image URL") @RequestParam(required = false) String images,
+            @Parameter(description = "Product image file") @RequestParam(required = false) MultipartFile imageFile) {
 
         try {
             // Validate product exists
@@ -230,10 +252,23 @@ public class ProductApiController {
             product.setPrice(price);
             product.setUser(user.get());
 
-            // Handle image upload
-            if (images != null && !images.isEmpty()) {
+            // Update category if categoryId is provided
+            if (categoryId != null) {
+                Optional<Category> category = categoryService.findById(categoryId);
+                if (category.isPresent()) {
+                    product.setCategory(category.get());
+                    product.setCategoryId(categoryId);
+                }
+            }
+
+            // Handle images - can be URL string or file upload
+            if (images != null && !images.trim().isEmpty()) {
+                // If it's a URL string
+                product.setImages(images.trim());
+            } else if (imageFile != null && !imageFile.isEmpty()) {
+                // If it's a file upload
                 try {
-                    String imageFilename = storageService.store(images, "prod_");
+                    String imageFilename = storageService.store(imageFile, "prod_");
                     product.setImages("/uploads/" + imageFilename);
                 } catch (Exception e) {
                     return ResponseEntity.badRequest()

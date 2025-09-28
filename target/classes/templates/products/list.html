@@ -62,7 +62,7 @@
 
     <!-- Add Product Modal -->
     <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addProductModalLabel">Thêm sản phẩm mới</h5>
@@ -88,7 +88,26 @@
                             <label for="productDescription" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
                         </div>
-                        <!-- Image upload disabled: images are not used in UI -->
+                        <div class="mb-3">
+                            <label for="productImages" class="form-label">Hình ảnh</label>
+                            <input type="text" class="form-control" id="productImages" name="images" placeholder="Nhập URL hình ảnh...">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="productCategoryId" class="form-label">Danh mục <span class="text-danger">*</span></label>
+                                <select class="form-control" id="productCategoryId" name="categoryId" required>
+                                    <option value="">Chọn danh mục</option>
+                                    <!-- Categories will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productUserId" class="form-label">Người tạo <span class="text-danger">*</span></label>
+                                <select class="form-control" id="productUserId" name="userId" required>
+                                    <option value="">Chọn người tạo</option>
+                                    <!-- Users will be loaded here -->
+                                </select>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -127,6 +146,10 @@
                         <div class="mb-3">
                             <label for="editProductDescription" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="editProductDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductImages" class="form-label">Hình ảnh</label>
+                            <input type="text" class="form-control" id="editProductImages" name="images" placeholder="Nhập URL hình ảnh...">
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
@@ -253,6 +276,17 @@
                 updateCategoryDropdowns();
                 updateUserDropdowns();
             });
+
+            // Reset add product form when modal is hidden
+            $('#addProductModal').on('hidden.bs.modal', function() {
+                $('#addProductForm')[0].reset();
+                // Reset dropdowns to default values
+                $('#productCategoryId').val('');
+                $('#productUserId').val('');
+                $('#productStatus').val('true');
+                $('#productDiscount').val('0');
+                $('#productSortOrder').val('0');
+            });
         });
 
         function loadProducts() {
@@ -363,6 +397,9 @@
             const title = $('#productTitle').val();
             const quantity = $('#productQuantity').val();
             const price = $('#productPrice').val();
+            const discount = $('#productDiscount').val();
+            const status = $('#productStatus').val();
+            const sortOrder = $('#productSortOrder').val();
             const categoryId = $('#productCategoryId').val();
             const userId = $('#productUserId').val();
 
@@ -382,6 +419,11 @@
                 return;
             }
 
+            if (discount !== '' && (parseInt(discount) < 0 || parseInt(discount) > 100)) {
+                alert('Giảm giá phải từ 0-100!');
+                return;
+            }
+
             if (!categoryId) {
                 alert('Vui lòng chọn danh mục!');
                 return;
@@ -397,6 +439,10 @@
             formData.append('quantity', quantity);
             formData.append('price', price);
             formData.append('description', $('#productDescription').val());
+            formData.append('images', $('#productImages').val()); // Image URL as string
+            formData.append('discount', discount || 0);
+            formData.append('status', status || true);
+            formData.append('sortOrder', sortOrder || 0);
             formData.append('categoryId', categoryId);
             formData.append('userId', userId);
 
@@ -436,6 +482,7 @@
                         $('#editProductQuantity').val(product.quantity);
                         $('#editProductPrice').val(product.price);
                         $('#editProductDescription').val(product.description);
+                        $('#editProductImages').val(product.images);
                         $('#editProductCategoryId').val(product.categoryId);
                         $('#editProductUserId').val(product.userId);
                         $('#editProductModal').modal('show');
@@ -488,6 +535,7 @@
             formData.append('quantity', quantity);
             formData.append('price', price);
             formData.append('description', $('#editProductDescription').val());
+            formData.append('images', $('#editProductImages').val()); // Image URL as string
             formData.append('categoryId', categoryId);
             formData.append('userId', userId);
 

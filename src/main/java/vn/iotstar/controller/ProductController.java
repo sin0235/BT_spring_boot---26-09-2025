@@ -124,6 +124,21 @@ public class ProductController {
         }
 
         try {
+            // Set category and user objects from IDs
+            if (product.getCategoryId() != null) {
+                Optional<Category> category = categoryService.findById(product.getCategoryId());
+                if (category.isPresent()) {
+                    product.setCategory(category.get());
+                }
+            }
+
+            if (product.getUserId() != null) {
+                Optional<User> user = userService.findById(product.getUserId());
+                if (user.isPresent()) {
+                    product.setUser(user.get());
+                }
+            }
+
             // Validate business rules
             if (product.getQuantity() != null && product.getQuantity() < 0) {
                 bindingResult.rejectValue("quantity", "error.quantity", "Số lượng phải >= 0");
@@ -135,6 +150,15 @@ public class ProductController {
 
             if (product.getDiscount() != null && (product.getDiscount() < 0 || product.getDiscount() > 100)) {
                 bindingResult.rejectValue("discount", "error.discount", "Giảm giá phải từ 0-100");
+            }
+
+            // Validate required fields
+            if (product.getCategoryId() == null) {
+                bindingResult.rejectValue("categoryId", "error.categoryId", "Vui lòng chọn danh mục");
+            }
+
+            if (product.getUserId() == null) {
+                bindingResult.rejectValue("userId", "error.userId", "Vui lòng chọn người tạo");
             }
 
             if (bindingResult.hasErrors()) {

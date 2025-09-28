@@ -217,6 +217,22 @@
                                     </div>
                                 </div>
 
+                                <!-- Images -->
+                                <div class="mb-3">
+                                    <label for="productImages" class="form-label">
+                                        <i class="fas fa-image me-1"></i>
+                                        Hình ảnh
+                                    </label>
+                                    <input type="text" class="form-control" th:field="*{images}"
+                                           th:classappend="${#fields.hasErrors('images')} ? 'is-invalid'"
+                                           placeholder="Nhập URL hình ảnh...">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('images')}"
+                                         th:errors="*{images}">
+                                        Hình ảnh không hợp lệ
+                                    </div>
+                                    <div class="form-text">Nhập URL hình ảnh sản phẩm</div>
+                                </div>
+
                                 <!-- Discount and Status -->
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -341,10 +357,85 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        let categories = [];
+        let users = [];
+
+        // Initialize form - categories and users are already loaded from server-side
+        $(document).ready(function() {
+            console.log('Form initialized. Categories and users should be available from server-side rendering.');
+
+            // Debug: Check if dropdowns have options
+            const categorySelect = $('[name="categoryId"]');
+            const userSelect = $('[name="userId"]');
+
+            console.log('Category options count:', categorySelect.find('option').length);
+            console.log('User options count:', userSelect.find('option').length);
+
+            // If dropdowns are empty, try to load from API as fallback
+            if (categorySelect.find('option').length <= 1) {
+                console.log('Loading categories from API...');
+                $.get('/api/category/all')
+                    .done(function(response) {
+                        if (response.status === 'success') {
+                            categories = response.body || [];
+                            updateCategoryDropdowns();
+                            console.log('Categories loaded from API:', categories.length);
+                        }
+                    })
+                    .fail(function() {
+                        console.error('Failed to load categories from API');
+                    });
+            }
+
+            if (userSelect.find('option').length <= 1) {
+                console.log('Loading users from API...');
+                $.get('/api/user/all')
+                    .done(function(response) {
+                        if (response.status === 'success') {
+                            users = response.body || [];
+                            updateUserDropdowns();
+                            console.log('Users loaded from API:', users.length);
+                        }
+                    })
+                    .fail(function() {
+                        console.error('Failed to load users from API');
+                    });
+            }
+        });
+
+        function updateCategoryDropdowns() {
+            const categorySelect = $('[name="categoryId"]');
+            // Only update if dropdown is empty (no server-side options)
+            if (categorySelect.find('option').length <= 1) {
+                categorySelect.empty();
+                categorySelect.append('<option value="">Chọn danh mục</option>');
+                categories.forEach(function(category) {
+                    categorySelect.append('<option value="' + category.id + '">' + category.name + '</option>');
+                });
+            }
+        }
+
+        function updateUserDropdowns() {
+            const userSelect = $('[name="userId"]');
+            // Only update if dropdown is empty (no server-side options)
+            if (userSelect.find('option').length <= 1) {
+                userSelect.empty();
+                userSelect.append('<option value="">Chọn người tạo</option>');
+                users.forEach(function(user) {
+                    userSelect.append('<option value="' + user.id + '">' + user.fullname + ' (' + user.email + ')</option>');
+                });
+            }
+        }
+
+        $(document).ready(function() {
+            loadCategoriesAndUsers();
+        });
+
         // Form validation
         document.querySelector('form').addEventListener('submit', function(e) {
             const title = document.querySelector('[name="title"]').value.trim();

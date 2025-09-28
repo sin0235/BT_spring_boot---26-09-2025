@@ -44,6 +44,9 @@ public class Product implements Serializable {
     @JsonIgnore
     private User user;
 
+    @Column(name = "userid", insertable = false, updatable = false)
+    private Integer userId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     @JsonIgnore
@@ -147,6 +150,14 @@ public class Product implements Serializable {
         this.categoryId = categoryId;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
     public String getImages() {
         return images;
     }
@@ -187,11 +198,6 @@ public class Product implements Serializable {
         this.sortOrder = sortOrder;
     }
 
-    // Helper method to get user ID for JSON responses
-    public Integer getUserId() {
-        return user != null ? user.getId() : null;
-    }
-
     // Helper method to get user name for JSON responses
     public String getUserName() {
         return user != null ? user.getFullname() : null;
@@ -210,6 +216,7 @@ public class Product implements Serializable {
                 ", quantity=" + quantity +
                 ", price=" + price +
                 ", categoryId=" + categoryId +
+                ", userId=" + userId +
                 '}';
     }
 }
