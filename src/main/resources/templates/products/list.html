@@ -1,377 +1,381 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý sản phẩm</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Danh sách Sản phẩm</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .profile-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            min-height: calc(100vh - 200px);
+            padding: 30px 0;
+        }
+        
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 30px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .table th {
+            background-color: #667eea;
+            color: white;
+            border: none;
+        }
+        
+        .search-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .pagination .page-link {
+            border-radius: 20px;
+            margin: 0 2px;
+            border: none;
+            color: #667eea;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+        
+        .price {
+            font-weight: bold;
+            color: #28a745;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2><i class="fas fa-box"></i> Quản lý sản phẩm</h2>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                        <i class="fas fa-plus"></i> Thêm sản phẩm mới
-                    </button>
+    <!-- Header -->
+    <header class="header-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <img src="/uploads/avatars/avatar.jpg" alt="Profile" class="profile-img" 
+                         onerror="this.src='/images/default_image.png'">
                 </div>
-
-                <!-- Filter and Search -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
-                            </div>
-                            <div class="col-md-3">
-                                <select class="form-select" id="sortSelect">
-                                    <option value="name">Sắp xếp theo tên</option>
-                                    <option value="price-asc">Giá: Thấp đến cao</option>
-                                    <option value="price-desc">Giá: Cao đến thấp</option>
-                                    <option value="quantity">Số lượng</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" class="btn btn-outline-primary me-2" onclick="loadProducts()">
-                                    <i class="fas fa-search"></i> Tìm kiếm
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary" onclick="resetFilters()">
-                                    <i class="fas fa-undo"></i> Đặt lại
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-md-8">
+                    <h1 class="navbar-brand mb-0">
+                        <i class="fas fa-box me-2"></i>
+                        Quản Lý Sản phẩm
+                    </h1>
+                    <p class="mb-0 opacity-75">Hệ thống quản lý sản phẩm</p>
                 </div>
-
-                <!-- Products Table -->
-                <div class="card">
-                    <div class="card-body">
-                        <div id="productsTableContainer">
-                            <!-- Products will be loaded here -->
-                        </div>
-                    </div>
+                <div class="col-md-2 text-end">
+                    <a href="/" class="btn btn-outline-light">
+                        <i class="fas fa-home me-1"></i>
+                        Trang chủ
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 
-    <!-- Add Product Modal -->
-    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addProductModalLabel">Thêm sản phẩm mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form id="addProductForm">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="productTitle" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="productTitle" name="title" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="productQuantity" class="form-label">Số lượng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="productQuantity" name="quantity" min="0" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="productPrice" class="form-label">Giá <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="productPrice" name="price" step="0.01" min="0" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productDescription" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
-                        </div>
-                        <!-- Image upload disabled: images are not used in UI -->
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-list me-2"></i>Danh sách Sản phẩm</h2>
+                <a href="/products/new" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Thêm Sản phẩm
+                </a>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-box">
+                <form th:action="@{/products}" method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Tìm kiếm</label>
+                        <input type="text" class="form-control" name="keyword" 
+                               th:value="${keyword}" placeholder="Nhập tên sản phẩm...">
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                    <div class="col-md-2">
+                        <label class="form-label">Số bản ghi</label>
+                        <select class="form-select" name="size">
+                            <option value="5" th:selected="${pageSize == 5}">5</option>
+                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Sắp xếp theo</label>
+                        <select class="form-select" name="sortBy">
+                            <option value="id" th:selected="${sortBy == 'id'}">ID</option>
+                            <option value="title" th:selected="${sortBy == 'title'}">Tên</option>
+                            <option value="price" th:selected="${sortBy == 'price'}">Giá</option>
+                            <option value="quantity" th:selected="${sortBy == 'quantity'}">Số lượng</option>
+                            <option value="createDate" th:selected="${sortBy == 'createDate'}">Ngày tạo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Thứ tự</label>
+                        <select class="form-select" name="sortDir">
+                            <option value="asc" th:selected="${sortDir == 'asc'}">Tăng dần</option>
+                            <option value="desc" th:selected="${sortDir == 'desc'}">Giảm dần</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <a href="/products" class="btn btn-outline-secondary">
+                            <i class="fas fa-redo"></i>
+                        </a>
                     </div>
                 </form>
             </div>
-        </div>
-    </div>
 
-    <!-- Edit Product Modal -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+            <!-- Results Info -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">
+                    Hiển thị <strong th:text="${(currentPage * pageSize) + 1}">1</strong> 
+                    đến <strong th:text="${(currentPage * pageSize) + products.size()}">10</strong> 
+                    của <strong th:text="${totalItems}">100</strong> kết quả
+                </span>
+                <span class="text-muted" th:if="${keyword != null and !keyword.isEmpty()}">
+                    Kết quả tìm kiếm cho: "<strong th:text="${keyword}">keyword</strong>"
+                </span>
+            </div>
+
+            <!-- Products Table -->
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <a th:href="@{/products(page=${currentPage}, size=${pageSize}, sortBy='id', sortDir=${sortBy == 'id' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                           class="text-decoration-none text-white">
+                                            ID 
+                                            <i class="fas fa-sort" th:if="${sortBy != 'id'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'id' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'id' and sortDir == 'desc'}"></i>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a th:href="@{/products(page=${currentPage}, size=${pageSize}, sortBy='title', sortDir=${sortBy == 'title' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                           class="text-decoration-none text-white">
+                                            Tên sản phẩm
+                                            <i class="fas fa-sort" th:if="${sortBy != 'title'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'title' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'title' and sortDir == 'desc'}"></i>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a th:href="@{/products(page=${currentPage}, size=${pageSize}, sortBy='price', sortDir=${sortBy == 'price' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                           class="text-decoration-none text-white">
+                                            Giá
+                                            <i class="fas fa-sort" th:if="${sortBy != 'price'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'price' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'price' and sortDir == 'desc'}"></i>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a th:href="@{/products(page=${currentPage}, size=${pageSize}, sortBy='quantity', sortDir=${sortBy == 'quantity' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                           class="text-decoration-none text-white">
+                                            Số lượng
+                                            <i class="fas fa-sort" th:if="${sortBy != 'quantity'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'quantity' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'quantity' and sortDir == 'desc'}"></i>
+                                        </a>
+                                    </th>
+                                    <th>Mô tả</th>
+                                    <th width="200">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${products.empty}">
+                                    <td colspan="6" class="text-center py-4">
+                                        <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
+                                        <p class="text-muted mb-0">Không có sản phẩm nào được tìm thấy</p>
+                                        <a href="/products/new" class="btn btn-primary mt-2">
+                                            <i class="fas fa-plus me-1"></i>Thêm sản phẩm đầu tiên
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:each="product : ${products}">
+                                    <td th:text="${product.id}">1</td>
+                                    <td>
+                                        <strong th:text="${product.title}">Product Name</strong>
+                                    </td>
+                                    <td>
+                                        <span class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                                    </td>
+                                    <td th:text="${product.quantity}">0</td>
+                                    <td th:text="${product.description}">Description</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{/products/view/{id}(id=${product.id})}" 
+                                               class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a th:href="@{/products/edit/{id}(id=${product.id})}" 
+                                               class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                    title="Xóa" onclick="confirmDelete([[${product.id}]], '[[${product.title}]]')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div th:if="${totalPages > 1}" class="d-flex justify-content-center mt-4">
+                <nav>
+                    <ul class="pagination">
+                        <!-- First Page -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/products(page=0, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        
+                        <!-- Previous Page -->
+                        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                            <a class="page-link" th:href="@{/products(page=${currentPage - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        
+                        <!-- Page Numbers -->
+                        <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}" 
+                                  th:if="${i >= (currentPage - 2) and i <= (currentPage + 2)}">
+                            <li class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/products(page=${i}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}" 
+                                   th:text="${i + 1}">1</a>
+                            </li>
+                        </th:block>
+                        
+                        <!-- Next Page -->
+                        <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/products(page=${currentPage + 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                        
+                        <!-- Last Page -->
+                        <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                            <a class="page-link" th:href="@{/products(page=${totalPages - 1}, size=${pageSize}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-graduation-cap me-2"></i>Thông tin sinh viên</h5>
+                    <p class="mb-1"><strong>Họ tên:</strong> Trần Phúc Toàn</p>
+                    <p class="mb-1"><strong>MSSV:</strong> 23110344</p>
+                    <p class="mb-0"><strong>Lớp:</strong> 231102A</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <h5><i class="fas fa-info-circle me-2"></i>Dự án</h5>
+                    <p class="mb-1"><strong>Môn học:</strong> Lập trình Web</p>
+                    <p class="mb-1"><strong>Chủ đề:</strong> Product CRUD với Spring Boot</p>
+                    <p class="mb-0"><strong>Năm:</strong> 2025</p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="text-center">
+                <small>&copy; 2025 Trần Phúc Toàn - 23110344</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Chỉnh sửa sản phẩm</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Xác nhận xóa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form id="editProductForm">
-                    <input type="hidden" id="editProductId" name="id">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="editProductTitle" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="editProductTitle" name="title" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="editProductQuantity" class="form-label">Số lượng <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="editProductQuantity" name="quantity" min="0" required>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="editProductPrice" class="form-label">Giá <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="editProductPrice" name="price" step="0.01" min="0" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProductDescription" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="editProductDescription" name="description" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                        <button type="submit" class="btn btn-primary">Cập nhật</button>
-                    </div>
-                </form>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn xóa sản phẩm "<span id="productName"></span>" không?</p>
+                    <p class="text-danger"><small>Hành động này không thể hoàn tác.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <form id="deleteForm" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        let currentPage = 0;
-        let currentSearch = '';
-        let currentSort = 'name';
-
-        $(document).ready(function() {
-            loadProducts();
-
-            // Add product form submit
-            $('#addProductForm').on('submit', function(e) {
-                e.preventDefault();
-                addProduct();
-            });
-
-            // Edit product form submit
-            $('#editProductForm').on('submit', function(e) {
-                e.preventDefault();
-                updateProduct();
-            });
-
-            // Search input event
-            $('#searchInput').on('input', function() {
-                currentSearch = $(this).val();
-                currentPage = 0;
-                loadProducts();
-            });
-
-            // Sort select event
-            $('#sortSelect').on('change', function() {
-                currentSort = $(this).val();
-                currentPage = 0;
-                loadProducts();
-            });
-        });
-
-        function loadProducts() {
-            let url = `/api/product?q=${currentSearch}&page=${currentPage}&size=10`;
-
-            $.get(url)
-                .done(function(response) {
-                    if (response.status === 'success') {
-                        const page = response.body || response;
-                        displayProducts(page.content || []);
-                        displayPagination(page);
-                    } else {
-                        alert('Lỗi: ' + response.message);
-                    }
-                })
-                .fail(function() {
-                    alert('Lỗi khi tải danh sách sản phẩm');
-                });
-        }
-
-        function displayProducts(products) {
-            let html = '<div class="table-responsive"><table class="table table-striped table-hover">';
-            html += '<thead class="table-dark"><tr>';
-            html += '<th>#</th>';
-            html += '<th>Tên sản phẩm</th>';
-            html += '<th>Số lượng</th>';
-            html += '<th>Giá</th>';
-            html += '<th>Mô tả</th>';
-            html += '<th>Thao tác</th>';
-            html += '</tr></thead><tbody>';
-
-            if (products.length === 0) {
-                html += '<tr><td colspan="6" class="text-center">Không có sản phẩm nào</td></tr>';
-            } else {
-                products.forEach(function(product, index) {
-                    let price = new Intl.NumberFormat('vi-VN', {
-                        style: 'currency',
-                        currency: 'VND'
-                    }).format(product.price);
-
-                    html += '<tr>';
-                    html += '<td>' + (currentPage * 10 + index + 1) + '</td>';
-                    html += '<td>' + product.title + '</td>';
-                    html += '<td>' + product.quantity + '</td>';
-                    html += '<td>' + price + '</td>';
-                    html += '<td>' + (product.description || '') + '</td>';
-                    html += '<td>';
-                    html += '<button class="btn btn-sm btn-outline-primary me-2" onclick="editProduct(' + product.id + ')">';
-                    html += '<i class="fas fa-edit"></i> Sửa</button>';
-                    html += '<button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(' + product.id + ')">';
-                    html += '<i class="fas fa-trash"></i> Xóa</button>';
-                    html += '</td>';
-                    html += '</tr>';
-                });
-            }
-
-            html += '</tbody></table></div>';
-            $('#productsTableContainer').html(html);
-        }
-
-        function displayPagination(pageData) {
-            let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
-
-            // Previous button
-            if (pageData.first) {
-                html += '<li class="page-item disabled"><span class="page-link">Trước</span></li>';
-            } else {
-                html += '<li class="page-item"><a class="page-link" href="#" onclick="changePage(' + (currentPage - 1) + ')">Trước</a></li>';
-            }
-
-            // Page numbers
-            for (let i = 0; i < pageData.totalPages; i++) {
-                if (i === currentPage) {
-                    html += '<li class="page-item active"><span class="page-link">' + (i + 1) + '</span></li>';
-                } else {
-                    html += '<li class="page-item"><a class="page-link" href="#" onclick="changePage(' + i + ')">' + (i + 1) + '</a></li>';
-                }
-            }
-
-            // Next button
-            if (pageData.last) {
-                html += '<li class="page-item disabled"><span class="page-link">Sau</span></li>';
-            } else {
-                html += '<li class="page-item"><a class="page-link" href="#" onclick="changePage(' + (currentPage + 1) + ')">Sau</a></li>';
-            }
-
-            html += '</ul></nav>';
-            $('#productsTableContainer').append(html);
-        }
-
-        function changePage(page) {
-            currentPage = page;
-            loadProducts();
-        }
-
-        function resetFilters() {
-            currentSearch = '';
-            currentSort = 'name';
-            currentPage = 0;
-            $('#searchInput').val('');
-            $('#sortSelect').val('name');
-            loadProducts();
-        }
-
-        function addProduct() {
-            let formData = new FormData();
-            formData.append('title', $('#productTitle').val());
-            formData.append('quantity', $('#productQuantity').val());
-            formData.append('price', $('#productPrice').val());
-            formData.append('description', $('#productDescription').val());
-
-            // Image upload disabled: don't append image file
-
-            $.ajax({
-                url: '/api/product',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false
-            })
-            .done(function(response) {
-                if (response.status === 'created' || response.status === 'success') {
-                    alert('Thêm sản phẩm thành công!');
-                    $('#addProductModal').modal('hide');
-                    $('#addProductForm')[0].reset();
-                    loadProducts();
-                } else {
-                    alert('Lỗi: ' + response.message);
-                }
-            })
-            .fail(function() {
-                alert('Lỗi khi thêm sản phẩm');
-            });
-        }
-
-        function editProduct(id) {
-            $.get('/api/product/' + id)
-                .done(function(response) {
-                    if (response.success) {
-                        let product = response.data;
-                        $('#editProductId').val(product.id);
-                        $('#editProductTitle').val(product.title);
-                        $('#editProductQuantity').val(product.quantity);
-                        $('#editProductPrice').val(product.price);
-                        $('#editProductDescription').val(product.description);
-                        $('#editProductModal').modal('show');
-                    } else {
-                        alert('Lỗi: ' + response.message);
-                    }
-                })
-                .fail(function() {
-                    alert('Lỗi khi tải thông tin sản phẩm');
-                });
-        }
-
-        function updateProduct() {
-            let id = $('#editProductId').val();
-            let formData = new FormData();
-            formData.append('title', $('#editProductTitle').val());
-            formData.append('quantity', $('#editProductQuantity').val());
-            formData.append('price', $('#editProductPrice').val());
-            formData.append('description', $('#editProductDescription').val());
-
-            $.ajax({
-                url: '/api/product/' + id,
-                type: 'PUT',
-                data: formData,
-                processData: false,
-                contentType: false
-            })
-            .done(function(response) {
-                if (response.success) {
-                    alert('Cập nhật sản phẩm thành công!');
-                    $('#editProductModal').modal('hide');
-                    loadProducts();
-                } else {
-                    alert('Lỗi: ' + response.message);
-                }
-            })
-            .fail(function() {
-                alert('Lỗi khi cập nhật sản phẩm');
-            });
-        }
-
-        function deleteProduct(id) {
-            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-                $.ajax({
-                    url: '/api/product/' + id,
-                    type: 'DELETE'
-                })
-                .done(function(response) {
-                    if (response.success) {
-                        alert('Xóa sản phẩm thành công!');
-                        loadProducts();
-                    } else {
-                        alert('Lỗi: ' + response.message);
-                    }
-                })
-                .fail(function() {
-                    alert('Lỗi khi xóa sản phẩm');
-                });
-            }
+        function confirmDelete(id, name) {
+            document.getElementById('productName').textContent = name;
+            document.getElementById('deleteForm').action = '/products/delete/' + id;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
         }
     </script>
 </body>

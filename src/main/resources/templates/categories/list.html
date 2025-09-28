@@ -165,9 +165,8 @@
                     <div class="col-md-2">
                         <label class="form-label">Sắp xếp theo</label>
                         <select class="form-select" name="sortBy">
-                            <option value="cateid" th:selected="${sortBy == 'cateid'}">ID</option>
-                            <option value="catename" th:selected="${sortBy == 'catename'}">Tên</option>
-                            <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Ngày tạo</option>
+                            <option value="id" th:selected="${sortBy == 'id'}">ID</option>
+                            <option value="name" th:selected="${sortBy == 'name'}">Tên</option>
                         </select>
                     </div>
                     <div class="col-md-2">
@@ -208,27 +207,22 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='cateid', sortDir=${sortBy == 'cateid' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                        <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='id', sortDir=${sortBy == 'id' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
                                            class="text-decoration-none text-white">
                                             ID 
-                                            <i class="fas fa-sort" th:if="${sortBy != 'cateid'}"></i>
-                                            <i class="fas fa-sort-up" th:if="${sortBy == 'cateid' and sortDir == 'asc'}"></i>
-                                            <i class="fas fa-sort-down" th:if="${sortBy == 'cateid' and sortDir == 'desc'}"></i>
+                                            <i class="fas fa-sort" th:if="${sortBy != 'id'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'id' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'id' and sortDir == 'desc'}"></i>
                                         </a>
                                     </th>
                                     <!-- Icon column removed -->
                                     <th>
-                                        <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='catename', sortDir=${sortBy == 'catename' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
+                                        <a th:href="@{/categories(page=${currentPage}, size=${pageSize}, sortBy='name', sortDir=${sortBy == 'name' ? reverseSortDir : 'asc'}, keyword=${keyword})}" 
                                            class="text-decoration-none text-white">
                                             Tên Category
-                                            <i class="fas fa-sort" th:if="${sortBy != 'catename'}"></i>
-                                            <i class="fas fa-sort-up" th:if="${sortBy == 'catename' and sortDir == 'asc'}"></i>
-                                            <i class="fas fa-sort-down" th:if="${sortBy == 'catename' and sortDir == 'desc'}"></i>
-                                        <td>
-                                            <!-- Do not load category icon images; show placeholder -->
-                                            <i class="fas fa-tags text-muted"></i>
-                                        </td>
-                                            <i class="fas fa-sort-down" th:if="${sortBy == 'createdAt' and sortDir == 'desc'}"></i>
+                                            <i class="fas fa-sort" th:if="${sortBy != 'name'}"></i>
+                                            <i class="fas fa-sort-up" th:if="${sortBy == 'name' and sortDir == 'asc'}"></i>
+                                            <i class="fas fa-sort-down" th:if="${sortBy == 'name' and sortDir == 'desc'}"></i>
                                         </a>
                                     </th>
                                     <th width="200">Thao tác</th>
@@ -236,7 +230,7 @@
                             </thead>
                             <tbody>
                                 <tr th:if="${categories.empty}">
-                                    <td colspan="5" class="text-center py-4">
+                                    <td colspan="3" class="text-center py-4">
                                         <i class="fas fa-inbox fa-2x text-muted mb-3"></i>
                                         <p class="text-muted mb-0">Không có category nào được tìm thấy</p>
                                         <a href="/categories/new" class="btn btn-primary mt-2">
@@ -245,31 +239,22 @@
                                     </td>
                                 </tr>
                                 <tr th:each="category : ${categories}">
-                                    <td th:text="${category.cateid}">1</td>
+                                    <td th:text="${category.id}">1</td>
                                     <td>
-                                        <img th:if="${category.iconPath != null and !category.iconPath.isEmpty()}" 
-                                             th:src="@{'/' + category.iconPath}" 
-                                             alt="Icon" class="category-icon"
-                                             onerror="this.src='https://via.placeholder.com/50x50/667eea/ffffff?text=No+Image'">
-                                        <span th:if="${category.iconPath == null or category.iconPath.isEmpty()}" 
-                                              class="badge bg-secondary">Không có icon</span>
+                                        <strong th:text="${category.name}">Category Name</strong>
                                     </td>
-                                    <td>
-                                        <strong th:text="${category.catename}">Category Name</strong>
-                                    </td>
-                                    <td th:text="${#temporals.format(category.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a th:href="@{/categories/view/{id}(id=${category.cateid})}" 
+                                            <a th:href="@{/categories/view/{id}(id=${category.id})}" 
                                                class="btn btn-sm btn-outline-info" title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a th:href="@{/categories/edit/{id}(id=${category.cateid})}" 
+                                            <a th:href="@{/categories/edit/{id}(id=${category.id})}" 
                                                class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <button type="button" class="btn btn-sm btn-outline-danger" 
-                                                    title="Xóa" onclick="confirmDelete([[${category.cateid}]], '[[${category.catename}]]')">
+                                                    title="Xóa" onclick="confirmDelete([[${category.id}]], '[[${category.name}]]')">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>

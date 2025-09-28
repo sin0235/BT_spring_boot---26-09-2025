@@ -13,6 +13,6 @@ public class HomeController {
 
     @GetMapping("/products")
     public String products() {
-        return "products/list";
+        return "redirect:/products";
     }
 }
