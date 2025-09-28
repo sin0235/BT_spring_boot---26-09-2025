@@ -12,12 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.iotstar.entity.Category;
 import vn.iotstar.entity.Product;
+import vn.iotstar.entity.User;
 import vn.iotstar.model.Response;
-import vn.iotstar.service.CategoryService;
 import vn.iotstar.service.ProductService;
 import vn.iotstar.service.StorageService;
+import vn.iotstar.service.UserService;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,10 +30,10 @@ public class ProductApiController {
     
     @Autowired
     private ProductService productService;
-    
+
     @Autowired
-    private CategoryService categoryService;
-    
+    private UserService userService;
+
     @Autowired
     private StorageService storageService;
     
@@ -124,6 +124,18 @@ public class ProductApiController {
                         .body(Response.badRequest("Giá sản phẩm phải > 0"));
             }
 
+            if (userId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Response.badRequest("User ID không được để trống"));
+            }
+
+            // Check if user exists
+            Optional<User> user = userService.findById(userId);
+            if (!user.isPresent()) {
+                return ResponseEntity.badRequest()
+                        .body(Response.badRequest("Người dùng không tồn tại với ID: " + userId));
+            }
+
             // Check if product title already exists
             if (productService.existsByTitle(title.trim())) {
                 return ResponseEntity.badRequest()
@@ -135,6 +147,7 @@ public class ProductApiController {
             product.setQuantity(quantity);
             product.setDescription(description);
             product.setPrice(price);
+            product.setUser(user.get());
 
             // Handle image upload
             if (images != null && !images.isEmpty()) {
@@ -165,6 +178,7 @@ public class ProductApiController {
             @Parameter(description = "Quantity") @RequestParam Integer quantity,
             @Parameter(description = "Description") @RequestParam(required = false) String description,
             @Parameter(description = "Price") @RequestParam BigDecimal price,
+            @Parameter(description = "User ID") @RequestParam Integer userId,
             @Parameter(description = "Product image") @RequestParam(required = false) MultipartFile images) {
 
         try {
@@ -191,6 +205,18 @@ public class ProductApiController {
                         .body(Response.badRequest("Giá sản phẩm phải > 0"));
             }
 
+            if (userId == null) {
+                return ResponseEntity.badRequest()
+                        .body(Response.badRequest("User ID không được để trống"));
+            }
+
+            // Check if user exists
+            Optional<User> user = userService.findById(userId);
+            if (!user.isPresent()) {
+                return ResponseEntity.badRequest()
+                        .body(Response.badRequest("Người dùng không tồn tại với ID: " + userId));
+            }
+
             // Check if product title already exists for other products
             if (productService.existsByTitleAndNotId(title.trim(), id)) {
                 return ResponseEntity.badRequest()
@@ -202,6 +228,7 @@ public class ProductApiController {
             product.setQuantity(quantity);
             product.setDescription(description);
             product.setPrice(price);
+            product.setUser(user.get());
 
             // Handle image upload
             if (images != null && !images.isEmpty()) {

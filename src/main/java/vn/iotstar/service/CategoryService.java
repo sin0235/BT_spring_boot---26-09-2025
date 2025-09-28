@@ -3,6 +3,7 @@ package vn.iotstar.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.iotstar.entity.Category;
@@ -25,6 +26,12 @@ public class CategoryService {
 
     public Page<Category> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable);
+    }
+
+    public List<Category> findAllSorted(String sortBy, String sortDirection) {
+        Sort sort = sortDirection.equalsIgnoreCase("desc") ?
+            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        return categoryRepository.findAll(sort);
     }
 
     public Optional<Category> findById(Integer id) {

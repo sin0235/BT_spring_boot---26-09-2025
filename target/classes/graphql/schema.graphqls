@@ -57,6 +57,7 @@ type Query {
 
     # Category queries
     getAllCategories: [Category!]!
+    getAllCategoriesSorted(sortBy: String, sortDirection: String): [Category!]!
     getCategory(id: ID!): Category
 
     # User queries
